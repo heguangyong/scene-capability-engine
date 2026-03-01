@@ -1,6 +1,6 @@
 {
   "name": "scene-capability-engine",
-  "version": "3.3.23",
+  "version": "3.3.24",
   "description": "SCE (Scene Capability Engine) - A CLI tool and npm package for spec-driven development with AI coding assistants.",
   "main": "index.js",
   "bin": {
