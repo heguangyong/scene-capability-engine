@@ -57,6 +57,9 @@ describe('spec-bootstrap command', () => {
     expect(result.preview.requirements).toContain('Requirement 1');
     expect(result.preview.domain_map).toContain('# Problem Domain Mind Map');
     expect(result.preview.scene_spec).toContain('# Scene Spec');
+    expect(result.preview.domain_chain).toEqual(expect.objectContaining({
+      spec_id: '109-01-bootstrap-dry-run'
+    }));
 
     const generatedPath = path.join(tempDir, '.sce', 'specs', '109-01-bootstrap-dry-run');
     expect(await fs.pathExists(generatedPath)).toBe(false);
@@ -84,24 +87,29 @@ describe('spec-bootstrap command', () => {
     const tasksPath = path.join(specDir, 'tasks.md');
     const domainMapPath = path.join(specDir, 'custom', 'problem-domain-map.md');
     const sceneSpecPath = path.join(specDir, 'custom', 'scene-spec.md');
+    const domainChainPath = path.join(specDir, 'custom', 'problem-domain-chain.json');
 
     expect(await fs.pathExists(requirementsPath)).toBe(true);
     expect(await fs.pathExists(designPath)).toBe(true);
     expect(await fs.pathExists(tasksPath)).toBe(true);
     expect(await fs.pathExists(domainMapPath)).toBe(true);
     expect(await fs.pathExists(sceneSpecPath)).toBe(true);
+    expect(await fs.pathExists(domainChainPath)).toBe(true);
 
     const requirements = await fs.readFile(requirementsPath, 'utf8');
     const design = await fs.readFile(designPath, 'utf8');
     const tasks = await fs.readFile(tasksPath, 'utf8');
     const domainMap = await fs.readFile(domainMapPath, 'utf8');
     const sceneSpec = await fs.readFile(sceneSpecPath, 'utf8');
+    const domainChain = await fs.readJson(domainChainPath);
 
     expect(requirements).toContain('## Requirements');
     expect(design).toContain('## Requirement Mapping');
     expect(tasks).toContain('**Requirement**: Requirement 1');
     expect(domainMap).toContain('## Domain Mind Map');
     expect(sceneSpec).toContain('## Scene Definition');
+    expect(domainChain.spec_id).toBe(specName);
+    expect(domainChain.scene_id).toBe('scene.test-default');
   });
 
   test('fails when non-interactive mode has no name', async () => {

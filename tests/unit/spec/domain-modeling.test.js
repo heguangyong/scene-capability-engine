@@ -5,8 +5,11 @@ const path = require('path');
 const {
   DOMAIN_MAP_RELATIVE_PATH,
   SCENE_SPEC_RELATIVE_PATH,
+  DOMAIN_CHAIN_RELATIVE_PATH,
+  DOMAIN_CHAIN_API_VERSION,
   buildProblemDomainMindMap,
   buildSceneSpec,
+  buildProblemDomainChain,
   ensureSpecDomainArtifacts,
   validateSpecDomainArtifacts
 } = require('../../../lib/spec/domain-modeling');
@@ -41,6 +44,17 @@ describe('spec domain modeling', () => {
     expect(sceneSpec).toContain('## Ontology Coverage');
   });
 
+  test('builds deterministic domain chain payload', () => {
+    const chain = buildProblemDomainChain('120-01-domain-test', {
+      sceneId: 'scene.customer-order'
+    });
+    expect(chain.api_version).toBe(DOMAIN_CHAIN_API_VERSION);
+    expect(chain.scene_id).toBe('scene.customer-order');
+    expect(chain.spec_id).toBe('120-01-domain-test');
+    expect(Array.isArray(chain.decision_execution_path)).toBe(true);
+    expect(chain.decision_execution_path.length).toBeGreaterThanOrEqual(3);
+  });
+
   test('ensures required artifacts under spec custom directory', async () => {
     const result = await ensureSpecDomainArtifacts(tempDir, '120-01-domain-test', {
       sceneId: 'scene.customer-order'
@@ -48,8 +62,10 @@ describe('spec domain modeling', () => {
 
     expect(result.created.domain_map).toBe(true);
     expect(result.created.scene_spec).toBe(true);
+    expect(result.created.domain_chain).toBe(true);
     expect(await fs.pathExists(path.join(tempDir, '.sce', 'specs', '120-01-domain-test', DOMAIN_MAP_RELATIVE_PATH))).toBe(true);
     expect(await fs.pathExists(path.join(tempDir, '.sce', 'specs', '120-01-domain-test', SCENE_SPEC_RELATIVE_PATH))).toBe(true);
+    expect(await fs.pathExists(path.join(tempDir, '.sce', 'specs', '120-01-domain-test', DOMAIN_CHAIN_RELATIVE_PATH))).toBe(true);
   });
 
   test('validates required artifacts and mandatory sections', async () => {

@@ -60,6 +60,7 @@ sce spec bootstrap --name 01-00-feature-name --scene scene.customer-order-invent
 # Bootstrap now also generates mandatory scene artifacts:
 # - .sce/specs/<spec>/custom/problem-domain-map.md
 # - .sce/specs/<spec>/custom/scene-spec.md
+# - .sce/specs/<spec>/custom/problem-domain-chain.json (machine-readable chain model)
 
 # Run pipeline for one Spec
 sce spec pipeline run --spec 01-00-feature-name --scene scene.customer-order-inventory
@@ -84,6 +85,7 @@ Spec session governance:
 - `spec gate` now hard-fails when either of the following is missing or structurally incomplete:
   - `.sce/specs/<spec>/custom/problem-domain-map.md`
   - `.sce/specs/<spec>/custom/scene-spec.md`
+  - `.sce/specs/<spec>/custom/problem-domain-chain.json`
 
 ### Value Metrics
 

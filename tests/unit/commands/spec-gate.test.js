@@ -28,12 +28,48 @@ describe('spec-gate command', () => {
     await fs.ensureDir(path.join(specPath, 'custom'));
     await fs.writeFile(path.join(specPath, 'custom', 'problem-domain-map.md'), '# Problem Domain Mind Map\n## Root Problem\n## Domain Mind Map\n```mermaid\nmindmap\n  root((test))\n```\n## Layered Exploration Chain\n## Correction Loop\n', 'utf8');
     await fs.writeFile(path.join(specPath, 'custom', 'scene-spec.md'), '# Scene Spec\n## Scene Definition\n## Ontology Coverage\n## Decision & Execution Path\n## Acceptance & Gate\n', 'utf8');
+    await fs.writeJson(path.join(specPath, 'custom', 'problem-domain-chain.json'), {
+      api_version: 'sce.problem-domain-chain/v0.1',
+      scene_id: 'scene.test-default',
+      spec_id: '111-01-gate-contract-test',
+      problem: { statement: 'test problem' },
+      ontology: {
+        entity: ['order'],
+        relation: ['customer->order'],
+        business_rule: ['order must have status'],
+        decision_policy: ['approval policy'],
+        execution_flow: ['submit -> approve']
+      },
+      hypotheses: [{ id: 'H1', statement: 'lock issue' }],
+      risks: [{ id: 'R1', type: 'wrong-direction', statement: 'scope drift' }],
+      decision_execution_path: [{ step: 1 }, { step: 2 }, { step: 3 }],
+      correction_loop: { triggers: ['gate failure'], actions: ['refresh map'] },
+      verification: { gates: ['spec-gate'] }
+    }, { spaces: 2 });
     await fs.writeFile(path.join(specPath2, 'requirements.md'), '# Requirements\n', 'utf8');
     await fs.writeFile(path.join(specPath2, 'design.md'), '# Design\n## Requirement Mapping\n', 'utf8');
     await fs.writeFile(path.join(specPath2, 'tasks.md'), '- [ ] 1. Test task\n  - **Requirement**: Requirement 1\n  - **Design**: Design 1\n  - **Validation**: Acceptance Criteria\n', 'utf8');
     await fs.ensureDir(path.join(specPath2, 'custom'));
     await fs.writeFile(path.join(specPath2, 'custom', 'problem-domain-map.md'), '# Problem Domain Mind Map\n## Root Problem\n## Domain Mind Map\n```mermaid\nmindmap\n  root((test))\n```\n## Layered Exploration Chain\n## Correction Loop\n', 'utf8');
     await fs.writeFile(path.join(specPath2, 'custom', 'scene-spec.md'), '# Scene Spec\n## Scene Definition\n## Ontology Coverage\n## Decision & Execution Path\n## Acceptance & Gate\n', 'utf8');
+    await fs.writeJson(path.join(specPath2, 'custom', 'problem-domain-chain.json'), {
+      api_version: 'sce.problem-domain-chain/v0.1',
+      scene_id: 'scene.test-default',
+      spec_id: '111-02-gate-contract-test',
+      problem: { statement: 'test problem' },
+      ontology: {
+        entity: ['order'],
+        relation: ['customer->order'],
+        business_rule: ['order must have status'],
+        decision_policy: ['approval policy'],
+        execution_flow: ['submit -> approve']
+      },
+      hypotheses: [{ id: 'H1', statement: 'lock issue' }],
+      risks: [{ id: 'R1', type: 'wrong-direction', statement: 'scope drift' }],
+      decision_execution_path: [{ step: 1 }, { step: 2 }, { step: 3 }],
+      correction_loop: { triggers: ['gate failure'], actions: ['refresh map'] },
+      verification: { gates: ['spec-gate'] }
+    }, { spaces: 2 });
 
     originalLog = console.log;
     console.log = jest.fn();
@@ -184,6 +220,9 @@ describe('spec-gate command', () => {
     await fs.writeFile(path.join(specPath, 'requirements.md'), '# Requirements\n', 'utf8');
     await fs.writeFile(path.join(specPath, 'design.md'), '# Design\n## Requirement Mapping\n', 'utf8');
     await fs.writeFile(path.join(specPath, 'tasks.md'), '- [ ] 1. Test task\n  - **Validation**: Acceptance Criteria\n', 'utf8');
+    await fs.ensureDir(path.join(specPath, 'custom'));
+    await fs.writeFile(path.join(specPath, 'custom', 'problem-domain-map.md'), '# Problem Domain Mind Map\n## Root Problem\n## Domain Mind Map\n```mermaid\nmindmap\n  root((test))\n```\n## Layered Exploration Chain\n## Correction Loop\n', 'utf8');
+    await fs.writeFile(path.join(specPath, 'custom', 'scene-spec.md'), '# Scene Spec\n## Scene Definition\n## Ontology Coverage\n## Decision & Execution Path\n## Acceptance & Gate\n', 'utf8');
 
     const result = await runSpecGate({
       spec: specId,
