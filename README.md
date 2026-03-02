@@ -101,6 +101,7 @@ SCE is tool-agnostic and works with Codex, Claude Code, Cursor, Windsurf, VS Cod
 - Session governance is scene-first: `1 scene = 1 primary session`.
 - Spec work is attached as child sessions and auto-archived.
 - Startup now auto-detects adopted projects and aligns takeover baseline defaults automatically.
+- Error handling now follows a full incident loop by default: every record attempt is staged first and auto-closed on verified/promoted outcomes.
 - You can inspect or force-align baseline explicitly:
   - `sce workspace takeover-audit --json`
   - `sce workspace takeover-apply --json`

@@ -10,6 +10,8 @@ const {
   runErrorbookExportCommand,
   runErrorbookSyncRegistryCommand,
   runErrorbookRegistryHealthCommand,
+  runErrorbookIncidentListCommand,
+  runErrorbookIncidentShowCommand,
   runErrorbookListCommand,
   runErrorbookShowCommand,
   runErrorbookFindCommand,
@@ -54,11 +56,19 @@ describe('errorbook command workflow', () => {
     expect(result.created).toBe(true);
     expect(result.entry.id).toContain('eb-');
     expect(result.entry.quality_score).toBeGreaterThanOrEqual(70);
+    expect(result.incident_loop).toBeDefined();
+    expect(result.incident_loop.incident.state).toBe('open');
+    expect(result.incident_loop.incident.attempt_count).toBe(1);
+    expect(result.incident_loop.latest_attempt.attempt_no).toBe(1);
 
     const paths = resolveErrorbookPaths(tempDir);
     const index = await fs.readJson(paths.indexFile);
     expect(index.total_entries).toBe(1);
     expect(index.entries[0].fingerprint).toBe(result.entry.fingerprint);
+    const incidentIndex = await fs.readJson(paths.incidentIndexFile);
+    expect(incidentIndex.total_incidents).toBe(1);
+    const incidentFile = path.join(paths.incidentsDir, `${incidentIndex.incidents[0].id}.json`);
+    expect(await fs.pathExists(incidentFile)).toBe(true);
   });
 
   test('deduplicates by fingerprint and merges remediation details', async () => {
@@ -95,6 +105,77 @@ describe('errorbook command workflow', () => {
     expect(second.entry.fix_actions).toContain('Add lock expiration metric alert');
     expect(second.entry.verification_evidence).toContain('npm run test -- inventory-locks');
     expect(second.entry.ontology_tags).toEqual(expect.arrayContaining(['entity', 'relation']));
+  });
+
+  test('tracks every record attempt in staging incidents and auto-resolves on verified status', async () => {
+    const first = await runErrorbookRecordCommand({
+      title: 'Customer profile merge conflict',
+      symptom: 'Customer merge intermittently fails with optimistic lock mismatch.',
+      rootCause: 'Profile update and merge write path races on version field.',
+      fixAction: ['Serialize merge path writes'],
+      tags: 'customer',
+      ontology: 'entity,relation',
+      status: 'candidate',
+      json: true
+    }, {
+      projectPath: tempDir
+    });
+
+    const second = await runErrorbookRecordCommand({
+      title: 'Customer profile merge conflict',
+      symptom: 'Customer merge intermittently fails with optimistic lock mismatch.',
+      rootCause: 'Profile update and merge write path races on version field.',
+      fixAction: ['Add retry with optimistic version refresh'],
+      tags: 'customer',
+      ontology: 'entity,relation',
+      status: 'candidate',
+      json: true
+    }, {
+      projectPath: tempDir
+    });
+
+    const third = await runErrorbookRecordCommand({
+      title: 'Customer profile merge conflict',
+      symptom: 'Customer merge intermittently fails with optimistic lock mismatch.',
+      rootCause: 'Profile update and merge write path races on version field.',
+      fixAction: ['Add deterministic merge queue'],
+      verification: ['Merge concurrency test passed with 500 parallel requests'],
+      tags: 'customer,debug-evidence',
+      ontology: 'entity,relation,business_rule',
+      status: 'verified',
+      json: true
+    }, {
+      projectPath: tempDir
+    });
+
+    expect(first.incident_loop.incident.state).toBe('open');
+    expect(second.incident_loop.incident.attempt_count).toBe(2);
+    expect(third.incident_loop.incident.state).toBe('resolved');
+    expect(third.incident_loop.incident.linked_entry_id).toBe(third.entry.id);
+
+    const listed = await runErrorbookIncidentListCommand({
+      state: 'resolved',
+      json: true
+    }, {
+      projectPath: tempDir
+    });
+    expect(listed.mode).toBe('errorbook-incident-list');
+    expect(listed.total_results).toBe(1);
+    expect(listed.incidents[0].attempt_count).toBe(3);
+
+    const shown = await runErrorbookIncidentShowCommand({
+      id: listed.incidents[0].id,
+      json: true
+    }, {
+      projectPath: tempDir
+    });
+    expect(shown.mode).toBe('errorbook-incident-show');
+    expect(shown.incident.state).toBe('resolved');
+    expect(shown.incident.attempts).toHaveLength(3);
+
+    const paths = resolveErrorbookPaths(tempDir);
+    const resolvedSnapshotPath = path.join(paths.resolvedDir, `${listed.incidents[0].id}.json`);
+    expect(await fs.pathExists(resolvedSnapshotPath)).toBe(true);
   });
 
   test('enforces debug evidence from third repeated fix attempt onward', async () => {

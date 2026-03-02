@@ -414,6 +414,10 @@ sce errorbook record \
   --status verified \
   --json
 
+# Inspect temporary trial-and-error incident loop
+sce errorbook incident list --state open --json
+sce errorbook incident show <incident-id> --json
+
 # List/show/find entries
 sce errorbook list --status promoted --min-quality 75 --json
 sce errorbook show <entry-id> --json
@@ -466,6 +470,10 @@ SCE_REGISTRY_HEALTH_STRICT=1 node scripts/errorbook-registry-health-gate.js --js
 ```
 
 Curated quality policy (`宁缺毋滥，优胜略汰`) defaults:
+- All issues enter an incident loop by default:
+  - each `errorbook record` writes one staging attempt under `.sce/errorbook/staging/incidents/`
+  - staging incidents preserve full trial-and-error history to avoid repeated mistakes
+  - when record status reaches `verified|promoted|deprecated`, the incident auto-resolves and snapshot is archived under `.sce/errorbook/staging/resolved/`
 - `record` requires: `title`, `symptom`, `root_cause`, and at least one `fix_action`.
 - Fingerprint dedup is automatic; repeated records merge evidence and increment occurrence count.
 - Repeated-failure hard rule: from attempt `#3` of the same fingerprint (two failed rounds already happened), record must include debug evidence.
