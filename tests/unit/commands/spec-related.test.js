@@ -76,5 +76,33 @@ describe('spec-related command', () => {
       projectPath: tempDir
     })).rejects.toThrow('At least one selector is required');
   });
-});
 
+  test('uses scene override mapping for specs without domain chain scene id', async () => {
+    const specId = '150-00-legacy-unassigned';
+    const specRoot = path.join(tempDir, '.sce', 'specs', specId);
+    await fs.ensureDir(specRoot);
+    await fs.writeFile(path.join(specRoot, 'requirements.md'), '# Legacy spec\n', 'utf8');
+
+    await fs.ensureDir(path.join(tempDir, '.sce', 'spec-governance'));
+    await fs.writeJson(path.join(tempDir, '.sce', 'spec-governance', 'spec-scene-overrides.json'), {
+      schema_version: '1.0',
+      mappings: {
+        [specId]: {
+          scene_id: 'scene.customer-order-inventory',
+          source: 'unit-test'
+        }
+      }
+    }, { spaces: 2 });
+
+    const result = await runSpecRelatedCommand({
+      query: 'legacy spec',
+      scene: 'scene.customer-order-inventory',
+      limit: '10',
+      json: true
+    }, {
+      projectPath: tempDir
+    });
+
+    expect(result.related_specs.some((item) => item.spec_id === specId)).toBe(true);
+  });
+});

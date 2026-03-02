@@ -108,6 +108,8 @@ SCE 默认按“问题域闭环”推进诊断与修复：
 - 同一问题指纹失败两轮后，后续尝试必须补充 debug 证据。
 - 当 spec 绑定时，`studio verify/release` 默认执行 `problem-closure-gate`。
 - `studio plan` 默认执行目标 intake（自动绑定已有 spec 或新建 spec），并自动写入 scene 维度的 spec 治理快照。
+- 默认策略会阻断 `studio plan --manual-spec` 与 `--no-spec-governance`（仅在确有必要且策略显式放开时可绕过）。
+- 历史 spec 可通过 `sce studio backfill-spec-scenes --apply` 分批回填到 scene 治理映射（写入 `.sce/spec-governance/spec-scene-overrides.json`）。
 
 ---
 

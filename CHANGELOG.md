@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Studio historical scene backfill command:
+  - `sce studio backfill-spec-scenes`
+  - supports active-only/default batch backfill and writes `.sce/spec-governance/spec-scene-overrides.json`
+  - optionally refreshes governance artifacts after apply
+
+### Changed
+- Studio intake/governance policy is now stricter by default:
+  - `allow_manual_spec_override=false` blocks `--manual-spec` bypass unless explicitly enabled
+  - `governance.require_auto_on_plan=true` blocks `--no-spec-governance` bypass unless explicitly enabled
+- Spec governance and related-spec lookup now read scene override mappings from `.sce/spec-governance/spec-scene-overrides.json`.
+- Takeover/adoption baseline now provisions the stricter intake policy and backfill defaults.
+
 ## [3.5.0] - 2026-03-02
 
 ### Added

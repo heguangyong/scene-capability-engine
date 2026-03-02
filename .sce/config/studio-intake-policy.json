@@ -3,6 +3,7 @@
   "enabled": true,
   "auto_create_spec": true,
   "force_spec_for_studio_plan": true,
+  "allow_manual_spec_override": false,
   "prefer_existing_scene_spec": true,
   "related_spec_min_score": 45,
   "allow_new_spec_when_goal_diverges": true,
@@ -61,8 +62,93 @@
   },
   "governance": {
     "auto_run_on_plan": true,
+    "require_auto_on_plan": true,
     "max_active_specs_per_scene": 3,
     "stale_days": 14,
     "duplicate_similarity_threshold": 0.66
+  },
+  "backfill": {
+    "enabled": true,
+    "active_only_default": true,
+    "default_scene_id": "scene.sce-core",
+    "override_file": ".sce/spec-governance/spec-scene-overrides.json",
+    "rules": [
+      {
+        "id": "moqui-core",
+        "scene_id": "scene.moqui-core",
+        "keywords": [
+          "moqui"
+        ]
+      },
+      {
+        "id": "orchestration",
+        "scene_id": "scene.sce-orchestration",
+        "keywords": [
+          "orchestrate",
+          "runtime",
+          "controller",
+          "batch",
+          "parallel"
+        ]
+      },
+      {
+        "id": "template-registry",
+        "scene_id": "scene.sce-template-registry",
+        "keywords": [
+          "template",
+          "scene-package",
+          "registry",
+          "catalog",
+          "scene-template"
+        ]
+      },
+      {
+        "id": "spec-governance",
+        "scene_id": "scene.sce-spec-governance",
+        "keywords": [
+          "spec",
+          "gate",
+          "ontology",
+          "governance",
+          "policy"
+        ]
+      },
+      {
+        "id": "quality",
+        "scene_id": "scene.sce-quality",
+        "keywords": [
+          "test",
+          "quality",
+          "stability",
+          "jest",
+          "coverage"
+        ]
+      },
+      {
+        "id": "docs",
+        "scene_id": "scene.sce-docs",
+        "keywords": [
+          "document",
+          "documentation",
+          "onboarding",
+          "guide"
+        ]
+      },
+      {
+        "id": "platform",
+        "scene_id": "scene.sce-platform",
+        "keywords": [
+          "adopt",
+          "upgrade",
+          "workspace",
+          "repo",
+          "environment",
+          "devops",
+          "release",
+          "github",
+          "npm"
+        ]
+      }
+    ]
   }
 }

@@ -15,6 +15,7 @@ const {
   runStudioRollbackCommand,
   runStudioEventsCommand,
   runStudioPortfolioCommand,
+  runStudioBackfillSpecScenesCommand,
   runStudioResumeCommand,
   loadStudioSecurityPolicy,
   ensureStudioAuthorization,
@@ -115,6 +116,30 @@ describe('studio command workflow', () => {
     expect(await fs.pathExists(path.join(tempDir, '.sce', 'specs', intake.selected_spec_id))).toBe(false);
   });
 
+  test('plan blocks manual-spec bypass by default policy', async () => {
+    await expect(runStudioPlanCommand({
+      scene: 'scene.manual-block',
+      fromChat: 'session-manual-block-001',
+      goal: 'Implement checkout patch',
+      manualSpec: true,
+      json: true
+    }, {
+      projectPath: tempDir
+    })).rejects.toThrow('--manual-spec is disabled');
+  });
+
+  test('plan blocks no-spec-governance bypass by default policy', async () => {
+    await expect(runStudioPlanCommand({
+      scene: 'scene.governance-block',
+      fromChat: 'session-governance-block-001',
+      goal: 'Implement checkout patch',
+      specGovernance: false,
+      json: true
+    }, {
+      projectPath: tempDir
+    })).rejects.toThrow('--no-spec-governance is disabled');
+  });
+
   test('studio portfolio groups specs by scene and emits governance summary', async () => {
     const specA = 'auto-scene-order-a';
     const specB = 'auto-scene-order-b';
@@ -152,6 +177,42 @@ describe('studio command workflow', () => {
     expect(portfolio.report_file).toBe('.sce/spec-governance/scene-portfolio.latest.json');
     expect(await fs.pathExists(path.join(tempDir, '.sce', 'spec-governance', 'scene-portfolio.latest.json'))).toBe(true);
     expect(await fs.pathExists(path.join(tempDir, '.sce', 'spec-governance', 'scene-index.json'))).toBe(true);
+  });
+
+  test('studio backfill command writes scene override map for unassigned active specs', async () => {
+    await fs.ensureDir(path.join(tempDir, '.sce', 'specs', '101-00-moqui-service'));
+    await fs.ensureDir(path.join(tempDir, '.sce', 'specs', '105-00-orchestrate-plan-preview'));
+    await fs.writeFile(path.join(tempDir, '.sce', 'specs', '101-00-moqui-service', 'tasks.md'), '- [ ] pending\n', 'utf8');
+    await fs.writeFile(path.join(tempDir, '.sce', 'specs', '105-00-orchestrate-plan-preview', 'tasks.md'), '- [ ] pending\n', 'utf8');
+
+    const payload = await runStudioBackfillSpecScenesCommand({
+      apply: true,
+      json: true
+    }, {
+      projectPath: tempDir
+    });
+
+    expect(payload.mode).toBe('studio-scene-backfill');
+    expect(payload.summary.changed_count).toBeGreaterThanOrEqual(2);
+    expect(await fs.pathExists(path.join(tempDir, '.sce', 'spec-governance', 'spec-scene-overrides.json'))).toBe(true);
+  });
+
+  test('studio backfill command defaults to active-only policy', async () => {
+    await fs.ensureDir(path.join(tempDir, '.sce', 'specs', '101-00-moqui-active'));
+    await fs.ensureDir(path.join(tempDir, '.sce', 'specs', '102-00-moqui-completed'));
+    await fs.writeFile(path.join(tempDir, '.sce', 'specs', '101-00-moqui-active', 'tasks.md'), '- [ ] pending\n', 'utf8');
+    await fs.writeFile(path.join(tempDir, '.sce', 'specs', '102-00-moqui-completed', 'tasks.md'), '- [x] done\n', 'utf8');
+
+    const payload = await runStudioBackfillSpecScenesCommand({
+      json: true
+    }, {
+      projectPath: tempDir
+    });
+
+    expect(payload.mode).toBe('studio-scene-backfill');
+    expect(payload.active_only).toBe(true);
+    expect(payload.summary.candidate_count).toBe(1);
+    expect(payload.assignments[0].spec_id).toBe('101-00-moqui-active');
   });
 
   test('plan with --spec ingests domain-chain and carries it through generate/verify/release reports', async () => {

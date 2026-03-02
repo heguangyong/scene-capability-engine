@@ -6,6 +6,7 @@ const {
   classifyStudioGoalIntent,
   resolveStudioSpecIntakeDecision,
   runStudioAutoIntake,
+  runStudioSceneBackfill,
   runStudioSpecGovernance
 } = require('../../../lib/studio/spec-intake-governor');
 
@@ -104,5 +105,46 @@ describe('studio spec-intake-governor', () => {
     expect(report.summary.total_specs).toBeGreaterThanOrEqual(2);
     expect(report.report_file).toBe('.sce/spec-governance/scene-portfolio.latest.json');
     expect(await fs.pathExists(path.join(tempDir, '.sce', 'spec-governance', 'scene-index.json'))).toBe(true);
+  });
+
+  test('blocks manual intake bypass when policy disallows override', async () => {
+    await expect(runStudioAutoIntake({
+      scene_id: 'scene.manual-block',
+      from_chat: 'session-manual-block',
+      goal: 'Implement override test',
+      skip: true
+    }, {
+      projectPath: tempDir,
+      fileSystem: fs
+    })).rejects.toThrow('manual spec override is disabled');
+  });
+
+  test('backfills unassigned active specs into scene override map', async () => {
+    await fs.ensureDir(path.join(tempDir, '.sce', 'specs', '101-00-moqui-parity'));
+    await fs.ensureDir(path.join(tempDir, '.sce', 'specs', '104-00-orchestrate-preview'));
+    await fs.writeFile(path.join(tempDir, '.sce', 'specs', '101-00-moqui-parity', 'tasks.md'), '- [ ] pending\n', 'utf8');
+    await fs.writeFile(path.join(tempDir, '.sce', 'specs', '104-00-orchestrate-preview', 'tasks.md'), '- [ ] pending\n', 'utf8');
+
+    const backfill = await runStudioSceneBackfill({
+      apply: true
+    }, {
+      projectPath: tempDir,
+      fileSystem: fs
+    });
+
+    expect(backfill.mode).toBe('studio-scene-backfill');
+    expect(backfill.summary.candidate_count).toBeGreaterThanOrEqual(2);
+    expect(backfill.summary.changed_count).toBeGreaterThanOrEqual(2);
+    expect(await fs.pathExists(path.join(tempDir, '.sce', 'spec-governance', 'spec-scene-overrides.json'))).toBe(true);
+
+    const portfolio = await runStudioSpecGovernance({
+      apply: false
+    }, {
+      projectPath: tempDir,
+      fileSystem: fs
+    });
+    expect(
+      portfolio.scenes.some((item) => item.scene_id === 'scene.unassigned' && item.total_specs >= 2)
+    ).toBe(false);
   });
 });

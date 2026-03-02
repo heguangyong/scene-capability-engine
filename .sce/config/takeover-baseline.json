@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "engine": "sce",
   "managed": true,
-  "last_aligned_sce_version": "3.4.0",
+  "last_aligned_sce_version": "3.5.0",
   "defaults": {
     "autonomous": {
       "enabled": true,
@@ -96,6 +96,7 @@
       "enabled": true,
       "auto_create_spec": true,
       "force_spec_for_studio_plan": true,
+      "allow_manual_spec_override": false,
       "prefer_existing_scene_spec": true,
       "related_spec_min_score": 45,
       "allow_new_spec_when_goal_diverges": true,
@@ -103,9 +104,16 @@
       "goal_missing_strategy": "create_for_tracking",
       "governance": {
         "auto_run_on_plan": true,
+        "require_auto_on_plan": true,
         "max_active_specs_per_scene": 3,
         "stale_days": 14,
         "duplicate_similarity_threshold": 0.66
+      },
+      "backfill": {
+        "enabled": true,
+        "active_only_default": true,
+        "default_scene_id": "scene.sce-core",
+        "override_file": ".sce/spec-governance/spec-scene-overrides.json"
       }
     },
     "debug_policy": {

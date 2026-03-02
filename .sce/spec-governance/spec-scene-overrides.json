@@ -1,0 +1,224 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-03-02T16:06:49.658Z",
+  "updated_at": "2026-03-02T16:06:49.658Z",
+  "source": "studio-scene-backfill",
+  "mappings": {
+    "create": {
+      "scene_id": "scene.sce-core",
+      "source": "scene-backfill",
+      "rule_id": "default",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "99-00-moqui-service-entity-compatibility": {
+      "scene_id": "scene.moqui-core",
+      "source": "scene-backfill",
+      "rule_id": "moqui-core",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "98-00-moqui-runtime-default-adapter": {
+      "scene_id": "scene.moqui-core",
+      "source": "scene-backfill",
+      "rule_id": "moqui-core",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "97-00-moqui-parity-program": {
+      "scene_id": "scene.moqui-core",
+      "source": "scene-backfill",
+      "rule_id": "moqui-core",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "92-00-scene-template-contribute": {
+      "scene_id": "scene.sce-template-registry",
+      "source": "scene-backfill",
+      "rule_id": "template-registry",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "79-00-scene-registry-query": {
+      "scene_id": "scene.sce-template-registry",
+      "source": "scene-backfill",
+      "rule_id": "template-registry",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "78-00-scene-package-install": {
+      "scene_id": "scene.sce-template-registry",
+      "source": "scene-backfill",
+      "rule_id": "template-registry",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "33-00-ai-autonomous-control": {
+      "scene_id": "scene.sce-core",
+      "source": "scene-backfill",
+      "rule_id": "default",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "32-00-spec-level-collaboration": {
+      "scene_id": "scene.sce-spec-governance",
+      "source": "scene-backfill",
+      "rule_id": "spec-governance",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "25-00-nested-repo-support": {
+      "scene_id": "scene.sce-platform",
+      "source": "scene-backfill",
+      "rule_id": "platform",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "26-00-repo-config-hotfix": {
+      "scene_id": "scene.sce-platform",
+      "source": "scene-backfill",
+      "rule_id": "platform",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "23-00-template-creation-from-spec": {
+      "scene_id": "scene.sce-template-registry",
+      "source": "scene-backfill",
+      "rule_id": "template-registry",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "22-00-spec-template-library": {
+      "scene_id": "scene.sce-template-registry",
+      "source": "scene-backfill",
+      "rule_id": "template-registry",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "20-00-environment-configuration-management": {
+      "scene_id": "scene.sce-platform",
+      "source": "scene-backfill",
+      "rule_id": "platform",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "18-00-integration-test-expansion": {
+      "scene_id": "scene.sce-quality",
+      "source": "scene-backfill",
+      "rule_id": "quality",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "17-00-test-suite-optimization": {
+      "scene_id": "scene.sce-quality",
+      "source": "scene-backfill",
+      "rule_id": "quality",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "16-00-multi-workspace-management": {
+      "scene_id": "scene.sce-platform",
+      "source": "scene-backfill",
+      "rule_id": "platform",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "14-00-adopt-ux-improvement": {
+      "scene_id": "scene.sce-platform",
+      "source": "scene-backfill",
+      "rule_id": "platform",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "13-00-devops-integration-foundation": {
+      "scene_id": "scene.sce-platform",
+      "source": "scene-backfill",
+      "rule_id": "platform",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "115-02-jest-open-handle-governance": {
+      "scene_id": "scene.sce-spec-governance",
+      "source": "scene-backfill",
+      "rule_id": "spec-governance",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "115-00-kse-quality-hardening-program": {
+      "scene_id": "scene.sce-quality",
+      "source": "scene-backfill",
+      "rule_id": "quality",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "11-00-ai-autonomy-documentation-alignment": {
+      "scene_id": "scene.sce-docs",
+      "source": "scene-backfill",
+      "rule_id": "docs",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "107-00-spec-gate-command": {
+      "scene_id": "scene.sce-spec-governance",
+      "source": "scene-backfill",
+      "rule_id": "spec-governance",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "106-00-orchestrate-stop-runtime-control": {
+      "scene_id": "scene.sce-orchestration",
+      "source": "scene-backfill",
+      "rule_id": "orchestration",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "104-00-orchestrate-plan-preview": {
+      "scene_id": "scene.sce-orchestration",
+      "source": "scene-backfill",
+      "rule_id": "orchestration",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "105-00-orchestrate-live-status-stream": {
+      "scene_id": "scene.sce-orchestration",
+      "source": "scene-backfill",
+      "rule_id": "orchestration",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "102-00-moqui-test-coverage-hardening": {
+      "scene_id": "scene.sce-quality",
+      "source": "scene-backfill",
+      "rule_id": "quality",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "103-00-moqui-parity-acceptance-gate": {
+      "scene_id": "scene.moqui-core",
+      "source": "scene-backfill",
+      "rule_id": "moqui-core",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "101-00-moqui-api-catalog-monitoring-bridge": {
+      "scene_id": "scene.moqui-core",
+      "source": "scene-backfill",
+      "rule_id": "moqui-core",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "100-00-moqui-screen-endpoint-expansion": {
+      "scene_id": "scene.moqui-core",
+      "source": "scene-backfill",
+      "rule_id": "moqui-core",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "08-00-document-lifecycle-management": {
+      "scene_id": "scene.sce-docs",
+      "source": "scene-backfill",
+      "rule_id": "docs",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "07-00-user-onboarding-and-documentation": {
+      "scene_id": "scene.sce-docs",
+      "source": "scene-backfill",
+      "rule_id": "docs",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "04-00-ultrawork-integration-and-quality-automation": {
+      "scene_id": "scene.sce-quality",
+      "source": "scene-backfill",
+      "rule_id": "quality",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "03-00-multi-user-and-cross-tool-support": {
+      "scene_id": "scene.sce-core",
+      "source": "scene-backfill",
+      "rule_id": "default",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "02-00-project-adoption-and-upgrade": {
+      "scene_id": "scene.sce-platform",
+      "source": "scene-backfill",
+      "rule_id": "platform",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    },
+    "01-00-npm-github-release-pipeline": {
+      "scene_id": "scene.sce-platform",
+      "source": "scene-backfill",
+      "rule_id": "platform",
+      "updated_at": "2026-03-02T16:06:49.658Z"
+    }
+  }
+}

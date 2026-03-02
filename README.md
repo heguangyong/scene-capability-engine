@@ -108,6 +108,8 @@ Hard rule defaults:
 - After two failed rounds on the same problem fingerprint, debug evidence is required in subsequent attempts.
 - `studio verify/release` run `problem-closure-gate` by default when a spec is bound.
 - `studio plan` auto-runs goal intake (`bind existing spec` or `create spec`) and writes scene portfolio governance snapshots by default.
+- `studio plan --manual-spec` and `--no-spec-governance` are blocked by default policy; use policy overrides only when absolutely necessary.
+- Historical specs can be scene-governed incrementally via `sce studio backfill-spec-scenes --apply` (writes `.sce/spec-governance/spec-scene-overrides.json`).
 
 ---
 
