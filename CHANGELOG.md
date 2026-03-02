@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.4.4] - 2026-03-02
+
+### Fixed
+- CI release prepublish gate compatibility:
+  - `git-managed-gate` now supports `SCE_GIT_MANAGEMENT_ALLOW_UNTRACKED=1` (`--allow-untracked`) to allow untracked artifact files while still blocking tracked worktree changes.
+  - release workflow npm publish step now sets this flag to avoid false blocking when `.sce/reports/release-evidence/*` is generated before publish.
+
 ## [3.4.3] - 2026-03-02
 
 ### Added

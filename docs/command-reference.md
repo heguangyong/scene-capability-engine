@@ -2,7 +2,7 @@
 
 > Quick reference for all `sce` commands
 
-**Version**: 3.4.3
+**Version**: 3.4.4
 **Last Updated**: 2026-03-02
 
 ---
@@ -510,6 +510,9 @@ Curated quality policy (`宁缺毋滥，优胜略汰`) defaults:
 - If project has no GitHub/GitLab remote, gate passes by default (can hard-enforce with `--no-allow-no-remote` or `SCE_GIT_MANAGEMENT_ALLOW_NO_REMOTE=0`).
 - In CI/tag detached-HEAD context (`CI=1` or `GITHUB_ACTIONS=1`), branch/upstream sync checks are relaxed by default.
   Use `SCE_GIT_MANAGEMENT_STRICT_CI=1` (or `--strict-ci`) to enforce full local-level branch checks in CI.
+- When CI generates temporary release artifacts before `npm publish`, you can allow untracked-only worktree drift while keeping tracked-change protection:
+  - `SCE_GIT_MANAGEMENT_ALLOW_UNTRACKED=1` (or `--allow-untracked`)
+  - tracked file changes still fail the gate.
 
 ### Studio Workflow
 

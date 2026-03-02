@@ -67,6 +67,7 @@ describe('git-managed-gate script', () => {
       '--project-path', tempDir,
       '--fail-on-violation',
       '--no-allow-no-remote',
+      '--allow-untracked',
       '--target-hosts', 'github.com,gitlab.com',
       '--ci-context',
       '--strict-ci',
@@ -76,6 +77,7 @@ describe('git-managed-gate script', () => {
     expect(parsed.projectPath).toBe(path.resolve(tempDir));
     expect(parsed.failOnViolation).toBe(true);
     expect(parsed.allowNoRemote).toBe(false);
+    expect(parsed.allowUntracked).toBe(true);
     expect(parsed.targetHosts).toEqual(['github.com', 'gitlab.com']);
     expect(parsed.ciContext).toBe(true);
     expect(parsed.strictCi).toBe(true);
@@ -85,11 +87,13 @@ describe('git-managed-gate script', () => {
   test('parseArgs auto-detects CI context from environment', () => {
     const parsed = parseArgs([], {
       CI: 'true',
-      SCE_GIT_MANAGEMENT_STRICT_CI: '1'
+      SCE_GIT_MANAGEMENT_STRICT_CI: '1',
+      SCE_GIT_MANAGEMENT_ALLOW_UNTRACKED: 'true'
     });
 
     expect(parsed.ciContext).toBe(true);
     expect(parsed.strictCi).toBe(true);
+    expect(parsed.allowUntracked).toBe(true);
   });
 
   test('passes with warning when no github/gitlab remote and allowNoRemote is true', () => {
@@ -171,6 +175,37 @@ describe('git-managed-gate script', () => {
 
     expect(payload.passed).toBe(true);
     expect(payload.warnings.some((item) => item.includes('ci context detected'))).toBe(true);
+  });
+
+  test('allows untracked files when allowUntracked is enabled', () => {
+    const { repoPath } = initManagedRepo(tempDir);
+    fs.writeFileSync(path.join(repoPath, 'temp-generated.json'), '{"ok":true}\n', 'utf8');
+
+    const payload = evaluateGitManagedGate({
+      projectPath: repoPath,
+      allowNoRemote: false,
+      allowUntracked: true,
+      targetHosts: ['github.com', 'gitlab.com']
+    });
+
+    expect(payload.passed).toBe(true);
+    expect(payload.details.worktree_changes.untracked_count).toBeGreaterThan(0);
+    expect(payload.warnings.some((item) => item.includes('untracked files detected'))).toBe(true);
+  });
+
+  test('still fails when tracked changes exist even if allowUntracked is enabled', () => {
+    const { repoPath } = initManagedRepo(tempDir);
+    fs.writeFileSync(path.join(repoPath, 'README.md'), '# modified\n', 'utf8');
+
+    const payload = evaluateGitManagedGate({
+      projectPath: repoPath,
+      allowNoRemote: false,
+      allowUntracked: true,
+      targetHosts: ['github.com', 'gitlab.com']
+    });
+
+    expect(payload.passed).toBe(false);
+    expect(payload.violations).toContain('working tree has uncommitted changes');
   });
 
   test('fails in strict CI mode when detached HEAD has no upstream', () => {

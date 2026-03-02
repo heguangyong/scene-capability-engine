@@ -31,6 +31,7 @@ function parseArgs(argv = [], env = process.env) {
     projectPath: process.cwd(),
     failOnViolation: false,
     allowNoRemote: parseBoolean(env.SCE_GIT_MANAGEMENT_ALLOW_NO_REMOTE, true),
+    allowUntracked: parseBoolean(env.SCE_GIT_MANAGEMENT_ALLOW_UNTRACKED, false),
     targetHosts: normalizeText(env.SCE_GIT_MANAGEMENT_TARGET_HOSTS || 'github.com,gitlab.com')
       .split(',')
       .map((item) => normalizeText(item).toLowerCase())
@@ -54,6 +55,10 @@ function parseArgs(argv = [], env = process.env) {
       options.allowNoRemote = true;
     } else if (token === '--no-allow-no-remote') {
       options.allowNoRemote = false;
+    } else if (token === '--allow-untracked') {
+      options.allowUntracked = true;
+    } else if (token === '--no-allow-untracked') {
+      options.allowUntracked = false;
     } else if (token === '--target-hosts' && next) {
       options.targetHosts = `${next}`
         .split(',')
@@ -90,6 +95,8 @@ function printHelp() {
     '  --fail-on-violation       Exit with code 2 when violations exist',
     '  --allow-no-remote         Allow pass when no GitHub/GitLab remote is configured',
     '  --no-allow-no-remote      Fail when no GitHub/GitLab remote is configured',
+    '  --allow-untracked         Allow untracked files in worktree (tracked changes still fail)',
+    '  --no-allow-untracked      Fail when untracked files exist (default)',
     '  --target-hosts <csv>      Remote host match list (default: github.com,gitlab.com)',
     '  --ci-context              Treat current run as CI context (default from CI/GITHUB_ACTIONS env)',
     '  --no-ci-context           Force local mode even if CI env exists',
@@ -159,10 +166,29 @@ function parseAheadBehind(raw = '') {
   };
 }
 
+function parsePorcelainStatus(raw = '') {
+  const lines = `${raw || ''}`.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  let trackedCount = 0;
+  let untrackedCount = 0;
+  for (const line of lines) {
+    if (line.startsWith('??')) {
+      untrackedCount += 1;
+      continue;
+    }
+    trackedCount += 1;
+  }
+  return {
+    total_count: lines.length,
+    tracked_count: trackedCount,
+    untracked_count: untrackedCount
+  };
+}
+
 function evaluateGitManagedGate(options = {}) {
   const projectPath = options.projectPath || process.cwd();
   const targetHosts = Array.isArray(options.targetHosts) ? options.targetHosts : ['github.com', 'gitlab.com'];
   const allowNoRemote = options.allowNoRemote !== false;
+  const allowUntracked = options.allowUntracked === true;
   const ciContext = options.ciContext === true;
   const strictCi = options.strictCi === true;
   const relaxForCi = ciContext && !strictCi;
@@ -181,7 +207,12 @@ function evaluateGitManagedGate(options = {}) {
     upstream: null,
     ahead: null,
     behind: null,
-    clean_worktree: null
+    clean_worktree: null,
+    worktree_changes: {
+      total_count: 0,
+      tracked_count: 0,
+      untracked_count: 0
+    }
   };
 
   const insideWorkTree = runGit(projectPath, ['rev-parse', '--is-inside-work-tree']);
@@ -240,9 +271,19 @@ function evaluateGitManagedGate(options = {}) {
   if (statusResult.status !== 0) {
     violations.push(`failed to read git status: ${statusResult.stderr || 'unknown error'}`);
   } else {
-    details.clean_worktree = statusResult.stdout.length === 0;
-    if (!details.clean_worktree) {
+    const statusSummary = parsePorcelainStatus(statusResult.stdout);
+    details.worktree_changes = statusSummary;
+    const hasTrackedChanges = statusSummary.tracked_count > 0;
+    const hasUntrackedFiles = statusSummary.untracked_count > 0;
+    details.clean_worktree = !hasTrackedChanges && (!hasUntrackedFiles || allowUntracked);
+
+    if (hasTrackedChanges) {
       violations.push('working tree has uncommitted changes');
+    }
+    if (hasUntrackedFiles && !allowUntracked) {
+      violations.push('working tree has untracked files');
+    } else if (hasUntrackedFiles && allowUntracked) {
+      warnings.push(`untracked files detected (${statusSummary.untracked_count}) but allowed by policy`);
     }
   }
 
@@ -349,6 +390,7 @@ if (require.main === module) {
 module.exports = {
   parseArgs,
   parseRemotes,
+  parsePorcelainStatus,
   evaluateGitManagedGate,
   runGitManagedGateScript
 };

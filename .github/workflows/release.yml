@@ -1164,6 +1164,7 @@ jobs:
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          SCE_GIT_MANAGEMENT_ALLOW_UNTRACKED: "1"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
