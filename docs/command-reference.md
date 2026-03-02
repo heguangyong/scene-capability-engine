@@ -2,7 +2,7 @@
 
 > Quick reference for all `sce` commands
 
-**Version**: 3.4.5
+**Version**: 3.4.6
 **Last Updated**: 2026-03-02
 
 ---
@@ -11,7 +11,7 @@
 
 The CLI provides three command aliases:
 - `sce` - **Recommended primary command** (use this in all documentation)
-- `sce` - Legacy short alias (compatible)
+- `sco` - Legacy short alias (compatible)
 - `scene-capability-engine` - Legacy full alias (compatible)
 
 **Always use `sce` in new examples and documentation.**
@@ -24,7 +24,7 @@ The CLI provides three command aliases:
 npm install -g scene-capability-engine
 ```
 
-This creates the `sce` command globally. Legacy aliases `sce` and `scene-capability-engine` are still available.
+This creates the `sce` command globally. Legacy aliases `sco` and `scene-capability-engine` are still available.
 
 ---
 
@@ -61,6 +61,7 @@ sce spec bootstrap --name 01-00-feature-name --scene scene.customer-order-invent
 # - .sce/specs/<spec>/custom/problem-domain-map.md
 # - .sce/specs/<spec>/custom/scene-spec.md
 # - .sce/specs/<spec>/custom/problem-domain-chain.json (machine-readable chain model)
+# - .sce/specs/<spec>/custom/problem-contract.json (problem closure contract)
 
 # Run pipeline for one Spec
 sce spec pipeline run --spec 01-00-feature-name --scene scene.customer-order-inventory
@@ -92,11 +93,12 @@ Spec session governance:
 - `spec bootstrap|pipeline run|gate run` must bind to an active scene primary session (`--scene <scene-id>` or implicit binding from latest/unique active scene).
 - When multiple active scenes exist, you must pass `--scene` explicitly.
 - Multi-Spec orchestrate fallback (`--specs ...`) follows the same scene binding and writes per-spec child-session archive records.
-- `spec bootstrap` always generates problem-domain and scene-spec artifacts to force domain-first exploration.
+- `spec bootstrap` always generates problem-domain, scene-spec, and `problem-contract` artifacts to force domain-first exploration.
 - `spec gate` now hard-fails when either of the following is missing or structurally incomplete:
   - `.sce/specs/<spec>/custom/problem-domain-map.md`
   - `.sce/specs/<spec>/custom/scene-spec.md`
   - `.sce/specs/<spec>/custom/problem-domain-chain.json`
+- `problem-contract.json` is enforced by Studio stage gates (`problem-closure-gate`) during `verify/release`.
 - Closed-loop scene research baseline is now part of domain modeling artifacts:
   - `problem-domain-map.md` must include `Closed-Loop Research Coverage Matrix`
   - `scene-spec.md` must include `Closed-Loop Research Contract`
@@ -567,13 +569,17 @@ Stage guardrails are enforced by default:
 Problem evaluation mode (default required):
 - Studio now runs problem evaluation on every stage: `plan`, `generate`, `apply`, `verify`, `release`.
 - Default policy file: `.sce/config/problem-eval-policy.json` (also provisioned by template/adopt/takeover baseline).
-- Default hard-block stages: `apply`, `release`.
+- Mandatory dimensions: `problem_contract`, `ontology_alignment`, `convergence`.
+- Default hard-block behavior:
+  - stage block policy: `apply`, `release`
+  - dimension block policy: `problem_contract` blocks on `plan/apply/release`; `ontology_alignment` blocks on `apply/release`; `convergence` blocks on `release`
 - Evaluation combines risk/evidence/readiness and emits adaptive strategy:
   - `direct-execution`
   - `controlled-execution`
   - `evidence-first`
   - `explore-and-validate`
   - `debug-first`
+- Default retry rule: after two failed rounds on the same fingerprint, subsequent attempts must include debug evidence.
 - Evaluation report artifact is written to `.sce/reports/problem-eval/<job-id>-<stage>.json`.
 - Stage metadata and event payload now include `problem_evaluation` summary plus artifact pointer.
 - Environment overrides:
@@ -581,10 +587,34 @@ Problem evaluation mode (default required):
   - `SCE_PROBLEM_EVAL_DISABLED=1`
 
 Studio gate execution defaults:
-- `verify --profile standard` runs executable gates (unit test script when available, interactive governance report when present, scene package publish-batch dry-run when handoff manifest exists)
-- `release --profile standard` runs executable release preflight (npm pack dry-run, git managed gate, errorbook release gate, weekly ops gate when summary exists, release asset integrity when evidence directory exists, scene package publish-batch ontology gate, handoff capability matrix gate)
+- `verify --profile standard` runs executable gates (unit test script when available, interactive governance report when present, scene package publish-batch dry-run when handoff manifest exists, `problem-closure-gate` when spec context is available)
+- `release --profile standard` runs executable release preflight (npm pack dry-run, git managed gate, errorbook release gate, weekly ops gate when summary exists, release asset integrity when evidence directory exists, scene package publish-batch ontology gate, handoff capability matrix gate, `problem-closure-gate` when spec context is available)
 - `verify/release --profile strict` fails when any required gate step is skipped (for example missing manifest/evidence/scripts)
 - Required gate failures are auto-recorded into `.sce/errorbook` as `candidate` entries (tagged `release-blocker`) for follow-up triage.
+
+Problem closure gate (default policy):
+- Script: `node scripts/problem-closure-gate.js`
+- Policy file: `.sce/config/problem-closure-policy.json` (auto-provisioned by `init/adopt/takeover`)
+- Checks:
+  - verify stage: `problem-contract` + spec domain validation + domain coverage
+  - release stage: verify checks + verify report pass signal + governance high-alert block (configurable)
+
+```bash
+# Verify-stage closure gate
+node scripts/problem-closure-gate.js \
+  --stage verify \
+  --spec 01-00-customer-order-inventory \
+  --fail-on-block \
+  --json
+
+# Release-stage closure gate
+node scripts/problem-closure-gate.js \
+  --stage release \
+  --spec 01-00-customer-order-inventory \
+  --verify-report .sce/reports/studio/verify-<job-id>.json \
+  --fail-on-block \
+  --json
+```
 
 Authorization model (optional, policy-driven):
 - Enable policy: `SCE_STUDIO_REQUIRE_AUTH=1`

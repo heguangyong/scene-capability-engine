@@ -30,6 +30,7 @@ SCE is designed for teams that want AI agents to deliver software end-to-end wit
 | Autonomous delivery | `auto close-loop`, `close-loop-program`, `close-loop-controller` | Unattended bounded convergence |
 | Multi-agent orchestration | DAG scheduling, retries, 429 adaptive parallel control | Reliable parallel execution at scale |
 | Domain/ontology governance | problem-domain chain + scene template + gate validation | Fewer semantic regressions |
+| Problem closure loop | problem-domain map + chain + `problem-contract` + closure gate | Root-cause-first fixes with bounded convergence |
 | Problem evaluation routing | Stage-level risk/evidence/readiness scoring with mandatory policy | Adaptive execution strategy with guarded apply/release |
 | Local timeline safety | `timeline save/auto/list/show/restore/push` + key-event auto checkpoints | Recoverable local history |
 | Errorbook-driven repair | Local + registry-backed error patterns and release gates | Faster diagnosis and safer fixes |
@@ -94,6 +95,20 @@ git push origin vX.Y.Z
 
 ---
 
+## Default Problem-Solving Loop
+
+SCE now enforces a domain-closed diagnosis and repair route by default:
+
+1. Scope the problem first with scene artifacts (`problem-domain-map.md`, `scene-spec.md`, `problem-domain-chain.json`, `problem-contract.json`).
+2. Keep trial-and-error history in incident staging (`.sce/errorbook/staging/incidents/`) to avoid repeating failed attempts.
+3. Use problem evaluation to prioritize likely impact areas before applying/releasing changes.
+
+Hard rule defaults:
+- After two failed rounds on the same problem fingerprint, debug evidence is required in subsequent attempts.
+- `studio verify/release` run `problem-closure-gate` by default when a spec is bound.
+
+---
+
 ## AI Agent Compatibility
 
 SCE is tool-agnostic and works with Codex, Claude Code, Cursor, Windsurf, VS Code Copilot, and other CLI-capable agents.
@@ -103,6 +118,7 @@ SCE is tool-agnostic and works with Codex, Claude Code, Cursor, Windsurf, VS Cod
 - Spec work is attached as child sessions and auto-archived.
 - Startup now auto-detects adopted projects and aligns takeover baseline defaults automatically.
 - Problem evaluation policy is enabled by default (`.sce/config/problem-eval-policy.json`) and evaluates every Studio stage.
+- Problem closure policy is enabled by default (`.sce/config/problem-closure-policy.json`) and blocks verify/release bypass when required domain/problem evidence is missing.
 - Error handling now follows a full incident loop by default: every record attempt is staged first and auto-closed on verified/promoted outcomes.
 - You can inspect or force-align baseline explicitly:
   - `sce workspace takeover-audit --json`
@@ -112,6 +128,7 @@ SCE is tool-agnostic and works with Codex, Claude Code, Cursor, Windsurf, VS Cod
 
 ## Important Version Changes
 
+- `3.4.6`: Added default `problem-closure-gate` + `problem-contract` baseline and strengthened mandatory problem evaluation dimensions (`problem_contract`/`ontology_alignment`/`convergence`) for verify/release convergence control.
 - `3.4.5`: `git-managed-gate` now treats worktree checks as advisory in default relaxed CI mode (`CI/GITHUB_ACTIONS`, non-strict), preventing false release blocking.
 - `3.4.4`: Added `SCE_GIT_MANAGEMENT_ALLOW_UNTRACKED=1` / `--allow-untracked`; release workflow uses it for npm publish after generating release evidence artifacts.
 - `3.4.3`: Introduced mandatory problem evaluation across Studio stages (`plan/generate/apply/verify/release`) with policy file `.sce/config/problem-eval-policy.json` and stage report artifacts.
@@ -157,5 +174,5 @@ MIT. See [LICENSE](LICENSE).
 
 ---
 
-**Version**: 3.4.5  
+**Version**: 3.4.6  
 **Last Updated**: 2026-03-02

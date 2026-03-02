@@ -2,5 +2,13 @@
   "schema_version": "1.0",
   "closed_loop_research_required": true,
   "coverage_validation_required": true,
-  "fail_on_gap_default": true
+  "fail_on_gap_default": true,
+  "problem_contract_required": true,
+  "ontology_axes_required": [
+    "entity",
+    "relation",
+    "business_rule",
+    "decision_policy",
+    "execution_flow"
+  ]
 }

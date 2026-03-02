@@ -127,6 +127,67 @@ describe('problem-evaluator', () => {
     expect(result.blockers).toContain('missing-debug-evidence-after-repeated-failures');
   });
 
+  test('blocks plan stage when problem contract is incomplete', () => {
+    const result = evaluateProblemContext({
+      stage: 'plan',
+      scene_id: '',
+      goal: '',
+      problem_contract: {
+        issue_statement: '',
+        expected_outcome: '',
+        reproduction_steps: [],
+        impact_scope: '',
+        forbidden_workarounds: []
+      },
+      stage_readiness: {
+        prerequisites_ready: true
+      }
+    }, normalizePolicy({
+      mode: 'required',
+      enabled: true,
+      enforce_on_stages: ['plan'],
+      problem_contract_required_stages: ['plan'],
+      problem_contract_block_stages: ['plan']
+    }));
+
+    expect(result.blocked).toBe(true);
+    expect(result.passed).toBe(false);
+    expect(result.blockers.some((item) => item.startsWith('problem-contract-incomplete'))).toBe(true);
+  });
+
+  test('blocks release when high-severity governance breaches are present', () => {
+    const result = evaluateProblemContext({
+      stage: 'release',
+      scene_id: 'scene.governance',
+      goal: 'release customer flow',
+      stage_readiness: {
+        prerequisites_ready: true,
+        verify_report_ready: true,
+        verify_stage_passed: true,
+        regression_passed: true,
+        gate_required_ready: true,
+        high_alert_count: 2
+      },
+      gate_signals: {
+        required_total: 3,
+        required_enabled: 3,
+        required_missing: 0
+      }
+    }, normalizePolicy({
+      mode: 'required',
+      enabled: true,
+      enforce_on_stages: ['release'],
+      block_on_stages: ['release'],
+      convergence_required_stages: ['release'],
+      convergence_block_stages: ['release'],
+      release_block_on_high_alerts: true
+    }));
+
+    expect(result.blocked).toBe(true);
+    expect(result.passed).toBe(false);
+    expect(result.blockers.some((item) => item.includes('convergence-gate-missing'))).toBe(true);
+  });
+
   test('collects staging incident signals and detects debug evidence', async () => {
     const indexPath = path.join(tempDir, '.sce', 'errorbook', 'staging', 'index.json');
     const incidentsDir = path.join(tempDir, '.sce', 'errorbook', 'staging', 'incidents');

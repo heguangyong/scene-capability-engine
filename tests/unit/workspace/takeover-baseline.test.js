@@ -41,6 +41,7 @@ describe('takeover-baseline', () => {
     expect(await fs.pathExists(path.join(tempDir, '.sce', 'config', 'session-governance.json'))).toBe(true);
     expect(await fs.pathExists(path.join(tempDir, '.sce', 'config', 'spec-domain-policy.json'))).toBe(true);
     expect(await fs.pathExists(path.join(tempDir, '.sce', 'config', 'problem-eval-policy.json'))).toBe(true);
+    expect(await fs.pathExists(path.join(tempDir, '.sce', 'config', 'problem-closure-policy.json'))).toBe(true);
     expect(await fs.pathExists(path.join(tempDir, '.sce', 'steering', 'manifest.yaml'))).toBe(true);
     expect(await fs.pathExists(path.join(tempDir, '.sce', 'reports', 'takeover-baseline-latest.json'))).toBe(true);
 

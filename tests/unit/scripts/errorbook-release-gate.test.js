@@ -26,6 +26,7 @@ describe('errorbook-release-gate script', () => {
   test('parseArgs supports core flags', () => {
     const parsed = parseArgs([
       '--min-risk', 'medium',
+      '--min-quality', '65',
       '--include-verified',
       '--fail-on-block',
       '--json',
@@ -33,6 +34,7 @@ describe('errorbook-release-gate script', () => {
     ]);
 
     expect(parsed.minRisk).toBe('medium');
+    expect(parsed.minQuality).toBe(65);
     expect(parsed.includeVerified).toBe(true);
     expect(parsed.failOnBlock).toBe(true);
     expect(parsed.json).toBe(true);

@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.4.6] - 2026-03-02
+
+### Added
+- Default problem-closure gate and policy baseline:
+  - new script: `scripts/problem-closure-gate.js`
+  - new managed config: `.sce/config/problem-closure-policy.json` (and template counterpart)
+  - `studio verify/release` standard profiles now execute `problem-closure-gate` when spec context is available
+- Spec domain modeling now includes a mandatory machine-readable problem contract artifact:
+  - `.sce/specs/<spec>/custom/problem-contract.json`
+  - generated via spec domain init/refresh/bootstrap flow
+
+### Changed
+- Problem evaluation policy and runtime now enforce stronger closure dimensions by default:
+  - mandatory dimensions: `problem_contract`, `ontology_alignment`, `convergence`
+  - stage-level block policy tightened for plan/apply/release closure control
+- Errorbook record contract now captures structured attempt context (`attempt_contract`) for better trial/verification traceability.
+- Errorbook release gate now incorporates quality policy checks (`min_quality`) for unresolved verified entries.
+- Takeover/adoption baseline and file classification now manage `problem-closure-policy.json` as first-class config.
+- README/README.zh/command reference updated to document problem-domain closed loop, two-failed-round debug escalation, and closure gate workflows.
+
 ## [3.4.5] - 2026-03-02
 
 ### Fixed

@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "enabled": true,
+  "governance_report_path": ".sce/reports/interactive-governance-report.json",
+  "verify": {
+    "require_problem_contract": true,
+    "require_domain_validation": true,
+    "require_domain_coverage": true
+  },
+  "release": {
+    "require_problem_contract": true,
+    "require_domain_validation": true,
+    "require_domain_coverage": true,
+    "require_verify_report": true,
+    "require_governance_report": false,
+    "block_on_high_governance_alerts": true
+  }
+}

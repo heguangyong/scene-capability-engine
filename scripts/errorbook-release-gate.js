@@ -7,6 +7,7 @@ const { evaluateErrorbookReleaseGate } = require('../lib/commands/errorbook');
 function parseArgs(argv = []) {
   const options = {
     minRisk: 'high',
+    minQuality: 70,
     includeVerified: false,
     failOnBlock: false,
     json: false,
@@ -19,6 +20,12 @@ function parseArgs(argv = []) {
 
     if (token === '--min-risk' && next) {
       options.minRisk = `${next}`.trim().toLowerCase();
+      index += 1;
+    } else if (token === '--min-quality' && next) {
+      const parsed = Number.parseInt(`${next}`, 10);
+      if (Number.isFinite(parsed)) {
+        options.minQuality = Math.max(0, Math.min(100, parsed));
+      }
       index += 1;
     } else if (token === '--include-verified') {
       options.includeVerified = true;
@@ -43,6 +50,7 @@ function printHelp() {
     '',
     'Options:',
     '  --min-risk <level>      Risk threshold to block release (low|medium|high, default: high)',
+    '  --min-quality <0-100>   Minimum curation quality for unresolved entries (default: 70)',
     '  --include-verified      Also inspect verified (non-promoted) entries for risk threshold',
     '                          (temporary mitigation policy is always enforced for active entries)',
     '  --fail-on-block         Exit with code 2 when gate is blocked',
@@ -56,6 +64,7 @@ function printHelp() {
 async function runErrorbookReleaseGateScript(options = {}) {
   const payload = await evaluateErrorbookReleaseGate({
     minRisk: options.minRisk,
+    minQuality: options.minQuality,
     includeVerified: options.includeVerified
   }, {
     projectPath: options.projectPath
@@ -69,10 +78,10 @@ async function runErrorbookReleaseGateScript(options = {}) {
   } else {
     process.stdout.write('[errorbook-release-gate] blocked\n');
     process.stdout.write(
-      `[errorbook-release-gate] inspected=${payload.inspected_count} blocked=${payload.blocked_count} min-risk=${payload.gate.min_risk}\n`
+      `[errorbook-release-gate] inspected=${payload.inspected_count} blocked=${payload.blocked_count} min-risk=${payload.gate.min_risk} min-quality=${payload.gate.min_quality}\n`
     );
     process.stdout.write(
-      `[errorbook-release-gate] risk-blocked=${payload.risk_blocked_count || 0} mitigation-blocked=${payload.mitigation_blocked_count || 0}\n`
+      `[errorbook-release-gate] risk-blocked=${payload.risk_blocked_count || 0} curation-blocked=${payload.curation_blocked_count || 0} mitigation-blocked=${payload.mitigation_blocked_count || 0}\n`
     );
     payload.blocked_entries.slice(0, 20).forEach((item) => {
       const policy = Array.isArray(item.policy_violations) && item.policy_violations.length > 0

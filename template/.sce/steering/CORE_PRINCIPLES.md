@@ -211,10 +211,12 @@
    - `.sce/specs/<spec>/custom/problem-domain-map.md`
    - `.sce/specs/<spec>/custom/scene-spec.md`
    - `.sce/specs/<spec>/custom/problem-domain-chain.json`
+   - `.sce/specs/<spec>/custom/problem-contract.json`
 2) `problem-domain-map` 必须包含：Root Problem、Mind Map、Layered Exploration Chain、Correction Loop
 3) `scene-spec` 必须包含：Scene Definition、Ontology Coverage、Decision & Execution Path、Acceptance & Gate
-4) `problem-domain-chain.json` 必须包含可机读思维链：problem/ontology/hypotheses/risks/decision_execution_path/correction_loop/verification
-5) 默认门禁强制校验上述结构，缺失即 `no-go`
+4) `problem-domain-chain.json` 必须包含可机读思维链：problem/ontology/hypotheses/risks/decision_execution_path/correction_loop/verification/problem_contract/ontology_evidence
+5) `problem-contract.json` 必须包含：issue_statement、expected_outcome、reproduction_steps、impact_scope、forbidden_workarounds
+6) 默认门禁强制校验上述结构，缺失即 `no-go`（`problem-closure-gate` 在 verify/release 默认启用）
 
 **目标**: 用全局问题域视角 + 场景契约约束，减少方向性错误与盲改，提升纠偏效率
 
