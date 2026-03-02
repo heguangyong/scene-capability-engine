@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.4.5] - 2026-03-02
+
+### Fixed
+- `git-managed-gate` now treats worktree checks as advisory in default relaxed CI context (`CI/GITHUB_ACTIONS` + non-strict), preventing false release blocking from CI-side generated deltas.
+- Strict behavior is unchanged and still enforceable via `SCE_GIT_MANAGEMENT_STRICT_CI=1` (`--strict-ci`).
+
 ## [3.4.4] - 2026-03-02
 
 ### Fixed

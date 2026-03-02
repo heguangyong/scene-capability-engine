@@ -177,6 +177,23 @@ describe('git-managed-gate script', () => {
     expect(payload.warnings.some((item) => item.includes('ci context detected'))).toBe(true);
   });
 
+  test('passes in relaxed CI mode even when tracked worktree changes exist', () => {
+    const { repoPath } = initManagedRepo(tempDir);
+    fs.writeFileSync(path.join(repoPath, 'README.md'), '# changed in ci\n', 'utf8');
+
+    const payload = evaluateGitManagedGate({
+      projectPath: repoPath,
+      allowNoRemote: false,
+      targetHosts: ['github.com', 'gitlab.com'],
+      ciContext: true,
+      strictCi: false
+    });
+
+    expect(payload.passed).toBe(true);
+    expect(payload.details.worktree_enforced).toBe(false);
+    expect(payload.warnings.some((item) => item.includes('tracked worktree changes'))).toBe(true);
+  });
+
   test('allows untracked files when allowUntracked is enabled', () => {
     const { repoPath } = initManagedRepo(tempDir);
     fs.writeFileSync(path.join(repoPath, 'temp-generated.json'), '{"ok":true}\n', 'utf8');
@@ -225,5 +242,22 @@ describe('git-managed-gate script', () => {
       'detached HEAD is not allowed for managed release',
       'current branch has no upstream tracking branch'
     ]));
+  });
+
+  test('fails in strict CI mode when tracked worktree changes exist', () => {
+    const { repoPath } = initManagedRepo(tempDir);
+    fs.writeFileSync(path.join(repoPath, 'README.md'), '# strict ci changed\n', 'utf8');
+
+    const payload = evaluateGitManagedGate({
+      projectPath: repoPath,
+      allowNoRemote: false,
+      targetHosts: ['github.com', 'gitlab.com'],
+      ciContext: true,
+      strictCi: true
+    });
+
+    expect(payload.passed).toBe(false);
+    expect(payload.details.worktree_enforced).toBe(true);
+    expect(payload.violations).toContain('working tree has uncommitted changes');
   });
 });

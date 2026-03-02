@@ -201,6 +201,7 @@ function evaluateGitManagedGate(options = {}) {
     ci_context: ciContext,
     strict_ci: strictCi,
     relaxed_ci: relaxForCi,
+    worktree_enforced: !relaxForCi,
     remotes: [],
     target_remotes: [],
     branch: null,
@@ -275,13 +276,21 @@ function evaluateGitManagedGate(options = {}) {
     details.worktree_changes = statusSummary;
     const hasTrackedChanges = statusSummary.tracked_count > 0;
     const hasUntrackedFiles = statusSummary.untracked_count > 0;
-    details.clean_worktree = !hasTrackedChanges && (!hasUntrackedFiles || allowUntracked);
+    details.clean_worktree = !hasTrackedChanges && !hasUntrackedFiles;
 
     if (hasTrackedChanges) {
-      violations.push('working tree has uncommitted changes');
+      if (relaxForCi) {
+        warnings.push(`ci context detected; tracked worktree changes (${statusSummary.tracked_count}) ignored`);
+      } else {
+        violations.push('working tree has uncommitted changes');
+      }
     }
     if (hasUntrackedFiles && !allowUntracked) {
-      violations.push('working tree has untracked files');
+      if (relaxForCi) {
+        warnings.push(`ci context detected; untracked files (${statusSummary.untracked_count}) ignored`);
+      } else {
+        violations.push('working tree has untracked files');
+      }
     } else if (hasUntrackedFiles && allowUntracked) {
       warnings.push(`untracked files detected (${statusSummary.untracked_count}) but allowed by policy`);
     }
