@@ -587,7 +587,7 @@ SCE_STUDIO_REQUIRE_AUTH=1 SCE_STUDIO_AUTH_PASSWORD=top-secret sce studio apply -
 
 Studio JSON output now includes a stable UI-oriented task stream contract (in addition to existing `job_*` fields):
 - root IDs: `sessionId`, `sceneId`, `specId`, `taskId`, `taskRef`, `eventId`
-- `task.goal`, `task.status`, `task.summary` (fixed 3-line summary), `task.handoff`, `task.next_action`
+- `task.task_ref`, `task.title_norm`, `task.raw_request`, `task.goal`, `task.sub_goals`, `task.acceptance_criteria`, `task.needs_split`, `task.confidence`, `task.status`, `task.summary` (fixed 3-line summary), `task.handoff`, `task.next_action`
 - `task.file_changes[]`: `path`, `line`, `diffRef`
 - `task.commands[]`: `cmd`, `exit_code`, `stdout`, `stderr`, `log_path`
 - `task.errors[]`: `message`, `error_bundle` (copy-ready diagnostic bundle)

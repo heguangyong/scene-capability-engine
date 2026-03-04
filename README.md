@@ -130,7 +130,7 @@ SCE is tool-agnostic and works with Codex, Claude Code, Cursor, Windsurf, VS Cod
 
 Studio task-stream output contract (default):
 - IDs: `sessionId`, `sceneId`, `specId`, `taskId`, `taskRef`, `eventId`
-- Task: `task.goal`, `task.status`, `task.summary` (3-line), `task.handoff`, `task.next_action`
+- Task: `task.task_ref`, `task.title_norm`, `task.raw_request`, `task.goal`, `task.sub_goals`, `task.acceptance_criteria`, `task.needs_split`, `task.confidence`, `task.status`, `task.summary` (3-line), `task.handoff`, `task.next_action`
 - File refs: `task.file_changes[]` with `path`, `line`, `diffRef`
 - Command logs: `task.commands[]` with `cmd`, `exit_code`, `stdout`, `stderr`, `log_path`
 - Errors: `task.errors[]` with `message`, `error_bundle` (copy-ready)

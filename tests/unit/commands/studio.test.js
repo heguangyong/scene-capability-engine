@@ -72,8 +72,16 @@ describe('studio command workflow', () => {
       goal: 'Build customer-order-inventory demo',
       status: 'completed',
       ref: payload.taskRef,
+      task_ref: payload.taskRef,
+      title_norm: 'Build customer-order-inventory demo',
+      raw_request: 'Build customer-order-inventory demo',
       next_action: expect.stringContaining('sce studio generate')
     }));
+    expect(payload.task.needs_split).toBe(false);
+    expect(payload.task.sub_goals).toEqual([]);
+    expect(Array.isArray(payload.task.acceptance_criteria)).toBe(true);
+    expect(payload.task.acceptance_criteria.length).toBeGreaterThan(0);
+    expect(typeof payload.task.confidence).toBe('number');
     expect(Array.isArray(payload.task.summary)).toBe(true);
     expect(payload.task.summary).toHaveLength(3);
     expect(Array.isArray(payload.task.file_changes)).toBe(true);
@@ -93,6 +101,29 @@ describe('studio command workflow', () => {
 
     const jobPath = path.join(paths.jobsDir, `${payload.job_id}.json`);
     expect(await fs.pathExists(jobPath)).toBe(true);
+  });
+
+  test('normalizes multi-intent goal into structured task fields', async () => {
+    const payload = await runStudioPlanCommand({
+      scene: 'scene.multi-intent',
+      fromChat: 'session-multi-intent-001',
+      goal: 'Fix checkout timeout and add retry dashboard then update release notes',
+      json: true
+    }, {
+      projectPath: tempDir
+    });
+
+    expect(payload.task.raw_request).toBe('Fix checkout timeout and add retry dashboard then update release notes');
+    expect(payload.task.title_norm).toBe('Fix checkout timeout');
+    expect(payload.task.needs_split).toBe(true);
+    expect(payload.task.sub_goals).toEqual([
+      'Fix checkout timeout',
+      'add retry dashboard',
+      'update release notes'
+    ]);
+    expect(Array.isArray(payload.task.acceptance_criteria)).toBe(true);
+    expect(payload.task.acceptance_criteria.length).toBeGreaterThan(0);
+    expect(payload.task.confidence).toBeLessThan(0.9);
   });
 
   test('plan auto-intake creates and binds spec when scene has no matching spec', async () => {

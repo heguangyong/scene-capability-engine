@@ -130,7 +130,7 @@ SCE 对工具无锁定，可接入 Codex、Claude Code、Cursor、Windsurf、VS 
 
 Studio 任务流输出契约（默认）：
 - ID 字段：`sessionId`、`sceneId`、`specId`、`taskId`、`taskRef`、`eventId`
-- 任务主体：`task.goal`、`task.status`、`task.summary`（固定三行）、`task.handoff`、`task.next_action`
+- 任务主体：`task.task_ref`、`task.title_norm`、`task.raw_request`、`task.goal`、`task.sub_goals`、`task.acceptance_criteria`、`task.needs_split`、`task.confidence`、`task.status`、`task.summary`（固定三行）、`task.handoff`、`task.next_action`
 - 文件引用：`task.file_changes[]`（`path`、`line`、`diffRef`）
 - 命令执行：`task.commands[]`（`cmd`、`exit_code`、`stdout`、`stderr`、`log_path`）
 - 错误复制：`task.errors[]`（`message`、`error_bundle`，可直接复制给 AI 修复）
