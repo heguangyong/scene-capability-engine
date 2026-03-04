@@ -3,7 +3,7 @@
 > Quick reference for all `sce` commands
 
 **Version**: 3.5.2
-**Last Updated**: 2026-03-03
+**Last Updated**: 2026-03-04
 
 ---
 
@@ -181,9 +181,25 @@ sce task claim <spec-name> <task-id>
 # Unclaim a task
 sce task unclaim <spec-name> <task-id>
 
-# Show task status
+# List claimed tasks
+sce task list <spec-name>
 sce task status <spec-name>
+
+# Resolve or create hierarchical task reference (scene.spec.task)
+sce task ref --scene <scene-id> --spec <spec-id> --task <task-id> --json
+
+# Show task mapping from hierarchical ref
+sce task show --ref <SS.PP.TT> --json
+
+# Rerun by hierarchical ref (dry-run preview)
+sce task rerun --ref <SS.PP.TT> --dry-run --json
 ```
+
+Task references and studio runtime events are persisted in SQLite state store:
+- `.sce/state/sce-state.sqlite`
+- Backend policy: SQLite only (no file-backend mode).
+- In-memory fallback is restricted to `NODE_ENV=test` or `SCE_STATE_ALLOW_MEMORY_FALLBACK=1`.
+- If SQLite runtime support is unavailable outside fallback conditions, `task ref/show/rerun` and `studio events` persistence operations fail fast.
 
 ### Context & Prompts
 
@@ -570,7 +586,7 @@ SCE_STUDIO_REQUIRE_AUTH=1 SCE_STUDIO_AUTH_PASSWORD=top-secret sce studio apply -
 ```
 
 Studio JSON output now includes a stable UI-oriented task stream contract (in addition to existing `job_*` fields):
-- root IDs: `sessionId`, `sceneId`, `specId`, `taskId`, `eventId`
+- root IDs: `sessionId`, `sceneId`, `specId`, `taskId`, `taskRef`, `eventId`
 - `task.goal`, `task.status`, `task.summary` (fixed 3-line summary), `task.handoff`, `task.next_action`
 - `task.file_changes[]`: `path`, `line`, `diffRef`
 - `task.commands[]`: `cmd`, `exit_code`, `stdout`, `stderr`, `log_path`
@@ -578,6 +594,9 @@ Studio JSON output now includes a stable UI-oriented task stream contract (in ad
 - `task.evidence[]`: structured evidence references
 - `event[]`: raw audit event stream (`studio events` also keeps legacy `events[]` for compatibility)
 - `studio events --openhands-events <path>` switches `source_stream=openhands` and maps OpenHands raw events to the same task contract fields.
+- hierarchical task reference lookup/rerun:
+  - `sce task show --ref <SS.PP.TT> --json`
+  - `sce task rerun --ref <SS.PP.TT> [--dry-run] --json`
 
 Stage guardrails are enforced by default:
 - `plan` requires `--scene`; SCE binds one active primary session per scene

@@ -66,10 +66,12 @@ describe('studio command workflow', () => {
     expect(payload.sessionId).toBeTruthy();
     expect(payload.specId).toBeTruthy();
     expect(payload.taskId).toBe(`${payload.job_id}:plan`);
+    expect(payload.taskRef).toMatch(/^\d{2,}\.\d{2,}\.\d{2,}$/);
     expect(payload.eventId).toMatch(/^evt-/);
     expect(payload.task).toEqual(expect.objectContaining({
       goal: 'Build customer-order-inventory demo',
       status: 'completed',
+      ref: payload.taskRef,
       next_action: expect.stringContaining('sce studio generate')
     }));
     expect(Array.isArray(payload.task.summary)).toBe(true);
@@ -78,6 +80,9 @@ describe('studio command workflow', () => {
     expect(Array.isArray(payload.task.commands)).toBe(true);
     expect(Array.isArray(payload.task.errors)).toBe(true);
     expect(Array.isArray(payload.task.evidence)).toBe(true);
+    expect(
+      payload.task.evidence.some((item) => item.type === 'event-log' && item.ref === '.sce/state/sce-state.sqlite')
+    ).toBe(true);
     expect(Array.isArray(payload.event)).toBe(true);
     expect(payload.event).toHaveLength(1);
     expect(payload.event[0].event_id).toBe(payload.eventId);
@@ -411,6 +416,7 @@ describe('studio command workflow', () => {
     expect(verified.status).toBe('verified');
     expect(verified.artifacts.verify_report).toContain(`verify-${planned.job_id}.json`);
     expect(verified.taskId).toBe(`${planned.job_id}:verify`);
+    expect(verified.taskRef).toMatch(/^\d{2,}\.\d{2,}\.\d{2,}$/);
     expect(Array.isArray(verified.task.commands)).toBe(true);
     expect(verified.task.commands.length).toBeGreaterThan(0);
 
@@ -594,6 +600,7 @@ describe('studio command workflow', () => {
     });
     expect(eventsPayload.sceneId).toBe('scene.inventory');
     expect(eventsPayload.taskId).toBe(`${planned.job_id}:rollback`);
+    expect(eventsPayload.taskRef).toMatch(/^\d{2,}\.\d{2,}\.\d{2,}$/);
     expect(Array.isArray(eventsPayload.event)).toBe(true);
     expect(eventsPayload.event).toHaveLength(eventsPayload.events.length);
     expect(eventsPayload.eventId).toBe(eventsPayload.events[eventsPayload.events.length - 1].event_id);
@@ -670,6 +677,7 @@ describe('studio command workflow', () => {
     expect(payload.sceneId).toBe('scene.openhands-ui');
     expect(payload.specId).toBeTruthy();
     expect(payload.taskId).toBe(`${planned.job_id}:plan`);
+    expect(payload.taskRef).toMatch(/^\d{2,}\.\d{2,}\.\d{2,}$/);
     expect(payload.eventId).toBe('oh-3');
     expect(payload.event).toHaveLength(3);
     expect(payload.events).toHaveLength(3);

@@ -129,7 +129,7 @@ SCE 对工具无锁定，可接入 Codex、Claude Code、Cursor、Windsurf、VS 
   - `sce workspace takeover-apply --json`
 
 Studio 任务流输出契约（默认）：
-- ID 字段：`sessionId`、`sceneId`、`specId`、`taskId`、`eventId`
+- ID 字段：`sessionId`、`sceneId`、`specId`、`taskId`、`taskRef`、`eventId`
 - 任务主体：`task.goal`、`task.status`、`task.summary`（固定三行）、`task.handoff`、`task.next_action`
 - 文件引用：`task.file_changes[]`（`path`、`line`、`diffRef`）
 - 命令执行：`task.commands[]`（`cmd`、`exit_code`、`stdout`、`stderr`、`log_path`）
@@ -137,11 +137,20 @@ Studio 任务流输出契约（默认）：
 - 证据引用：`task.evidence[]`
 - 原始审计流：`event[]`（`studio events` 同时保留 `events[]` 兼容字段）
 - OpenHands 桥接：`sce studio events --openhands-events <path>` 可将 OpenHands 原始事件映射为同一 task 契约（`source_stream=openhands`）
+- 分层任务引用操作：
+  - `sce task ref --scene <scene-id> --spec <spec-id> --task <task-id> --json`
+  - `sce task show --ref <SS.PP.TT> --json`
+  - `sce task rerun --ref <SS.PP.TT> [--dry-run] --json`
+- 运行时治理状态库策略：
+  - 仅支持 SQLite 后端（`.sce/state/sce-state.sqlite`）
+  - 仅在 `NODE_ENV=test` 或 `SCE_STATE_ALLOW_MEMORY_FALLBACK=1` 时允许内存回退
+  - 在上述条件之外若 SQLite 不可用，任务引用/事件持久化会快速失败
 
 ---
 
 ## 重要版本变更
 
+- `3.6.0`：新增分层任务引用（`taskRef`，格式 `SS.PP.TT`），持久化到 SQLite 状态库 `.sce/state/sce-state.sqlite`；新增 `sce task ref/show/rerun` 用于引用查询与可重放执行。
 - `3.5.2`：新增 Studio 任务流输出契约（`sessionId/sceneId/specId/taskId/eventId`、结构化 `task.*` 字段、`event[]` 审计流），并新增 OpenHands 原始事件桥接能力：`sce studio events --openhands-events <path>`。
 - `3.5.1`：默认强化 Studio intake 治理（`--manual-spec`、`--no-spec-governance` 在未显式放开策略时会被阻断），新增历史 spec 场景回填命令 `sce studio backfill-spec-scenes`，并写入 `.sce/spec-governance/spec-scene-overrides.json` 以统一 portfolio 与 related-spec 的场景映射。
 - `3.5.0`：新增 Studio 目标自动 intake + 场景 spec 组合治理（`sce studio intake`、`sce studio portfolio`），并默认启用 intake 策略基线与治理快照产物，控制场景内 spec 无序增长。
@@ -191,5 +200,5 @@ MIT，见 [LICENSE](LICENSE)。
 
 ---
 
-**版本**：3.5.2  
-**最后更新**：2026-03-03
+**版本**：3.6.0  
+**最后更新**：2026-03-04

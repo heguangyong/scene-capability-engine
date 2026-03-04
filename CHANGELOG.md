@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.0] - 2026-03-04
+
+### Added
+- SQLite-backed SCE state store (`.sce/state/sce-state.sqlite`) for scene/spec/task-ref/event runtime governance.
+- Hierarchical task reference registry (`SS.PP.TT`) persisted in SQLite (`task_ref_registry` table).
+- New task reference commands:
+  - `sce task ref --scene <scene-id> --spec <spec-id> --task <task-id> --json`
+  - `sce task show --ref <SS.PP.TT> --json`
+  - `sce task rerun --ref <SS.PP.TT> [--dry-run] --json`
+- New module: `lib/task/task-ref-registry.js`.
+- New state-store unit tests for sqlite-only backend enforcement and fallback gating.
+
+### Changed
+- Studio task-stream payload now includes `taskRef` at root level and `task.ref` in `task` object.
+- Studio `task.summary` now carries task reference context for UI traceability.
+- Studio event stream persistence switched to SQLite (`studio_event_stream`) as the single source of truth.
+- CLI now registers a dedicated `task` command group (`claim/unclaim/list/status/ref/show/rerun`).
+- State backend selection now enforces sqlite-only runtime policy (no legacy file backend branch).
+
 ## [3.5.2] - 2026-03-03
 
 ### Added

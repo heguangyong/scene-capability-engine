@@ -23,6 +23,7 @@ const { registerSpecDomainCommand } = require('../lib/commands/spec-domain');
 const { registerSpecRelatedCommand } = require('../lib/commands/spec-related');
 const { registerTimelineCommands } = require('../lib/commands/timeline');
 const { registerValueCommands } = require('../lib/commands/value');
+const { registerTaskCommands } = require('../lib/commands/task');
 const VersionChecker = require('../lib/version/version-checker');
 const {
   findLegacyKiroDirectories,
@@ -943,6 +944,7 @@ registerOrchestrateCommands(program);
 
 // Value realization and observability commands
 registerValueCommands(program);
+registerTaskCommands(program);
 
 // Template management commands
 const templatesCommand = require('../lib/commands/templates');

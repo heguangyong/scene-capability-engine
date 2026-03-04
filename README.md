@@ -129,7 +129,7 @@ SCE is tool-agnostic and works with Codex, Claude Code, Cursor, Windsurf, VS Cod
   - `sce workspace takeover-apply --json`
 
 Studio task-stream output contract (default):
-- IDs: `sessionId`, `sceneId`, `specId`, `taskId`, `eventId`
+- IDs: `sessionId`, `sceneId`, `specId`, `taskId`, `taskRef`, `eventId`
 - Task: `task.goal`, `task.status`, `task.summary` (3-line), `task.handoff`, `task.next_action`
 - File refs: `task.file_changes[]` with `path`, `line`, `diffRef`
 - Command logs: `task.commands[]` with `cmd`, `exit_code`, `stdout`, `stderr`, `log_path`
@@ -137,11 +137,20 @@ Studio task-stream output contract (default):
 - Evidence: `task.evidence[]`
 - Raw audit stream: `event[]` (and `studio events` keeps `events[]` compatibility field)
 - OpenHands bridge: `sce studio events --openhands-events <path>` maps OpenHands raw events into the same task contract (`source_stream=openhands`)
+- Hierarchical task reference operations:
+  - `sce task ref --scene <scene-id> --spec <spec-id> --task <task-id> --json`
+  - `sce task show --ref <SS.PP.TT> --json`
+  - `sce task rerun --ref <SS.PP.TT> [--dry-run] --json`
+- Runtime governance state store policy:
+  - SQLite-only backend (`.sce/state/sce-state.sqlite`)
+  - In-memory fallback only in `NODE_ENV=test` or when `SCE_STATE_ALLOW_MEMORY_FALLBACK=1`
+  - Outside those conditions, unavailable SQLite support fails fast for task-ref/event persistence
 
 ---
 
 ## Important Version Changes
 
+- `3.6.0`: Added hierarchical task references (`taskRef`, format `SS.PP.TT`) backed by SQLite state store `.sce/state/sce-state.sqlite`, plus new task commands (`sce task ref/show/rerun`) for reference lookup and deterministic rerun.
 - `3.5.2`: Introduced task-stream output contract for Studio commands (`sessionId/sceneId/specId/taskId/eventId`, structured `task.*` fields, `event[]` audit stream) and added OpenHands raw-event bridge via `sce studio events --openhands-events <path>`.
 - `3.5.1`: Enforced stricter Studio intake defaults (`--manual-spec` and `--no-spec-governance` blocked unless policy override), added historical spec scene backfill command (`sce studio backfill-spec-scenes`) and persisted override mapping (`.sce/spec-governance/spec-scene-overrides.json`) for portfolio/related-spec alignment.
 - `3.5.0`: Added Studio automatic goal intake + scene spec portfolio governance (`sce studio intake`, `sce studio portfolio`), including default intake policy baseline and governance artifacts for bounded scene spec growth.
@@ -191,5 +200,5 @@ MIT. See [LICENSE](LICENSE).
 
 ---
 
-**Version**: 3.5.2  
-**Last Updated**: 2026-03-03
+**Version**: 3.6.0  
+**Last Updated**: 2026-03-04
