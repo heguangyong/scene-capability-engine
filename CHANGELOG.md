@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Capability plan apply result now includes preview lines + skipped titles for UI feedback.
+
 ## [3.6.14] - 2026-03-06
 
 ### Added
