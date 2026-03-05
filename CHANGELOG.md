@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Orchestration runtime now emits machine-readable `rate-limit:decision` telemetry events for retry/throttle/hold/recovery transitions.
+- New anti-429 runtime config knobs in `.sce/config/orchestrator.json`:
+  - `rateLimitRetrySpreadMs`
+  - `rateLimitLaunchHoldPollMs`
+  - `rateLimitDecisionEventThrottleMs`
+
+### Changed
+- Rate-limit retries now apply deterministic per-spec retry spread to reduce synchronized 429 bursts under high parallelism.
+- Launch-hold polling interval is now configurable, so anti-429 pause loops can be tuned for responsiveness vs overhead.
+
 ## [3.6.8] - 2026-03-05
 
 ### Added

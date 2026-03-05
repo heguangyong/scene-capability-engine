@@ -703,6 +703,7 @@ describe('OrchestrationEngine', () => {
         maxRetries: 1,
         rateLimitBackoffBaseMs: 200,
         rateLimitBackoffMaxMs: 10000,
+        rateLimitRetrySpreadMs: 0,
       });
 
       engine._random = () => 0; // deterministic jitter floor (50%)
@@ -749,6 +750,7 @@ describe('OrchestrationEngine', () => {
         maxRetries: 1,
         rateLimitBackoffBaseMs: 200,
         rateLimitBackoffMaxMs: 5000,
+        rateLimitRetrySpreadMs: 0,
       });
 
       engine._random = () => 0; // computed backoff = 100ms
@@ -798,6 +800,7 @@ describe('OrchestrationEngine', () => {
         maxRetries: 1,
         rateLimitBackoffBaseMs: 200,
         rateLimitBackoffMaxMs: 10000,
+        rateLimitRetrySpreadMs: 0,
       });
 
       engine._random = () => 0; // computed backoff = 100ms
@@ -959,6 +962,105 @@ describe('OrchestrationEngine', () => {
       expect(mockStatusMonitor.updateParallelTelemetry).toHaveBeenCalledWith(
         expect.objectContaining({ event: 'throttled', reason: 'rate-limit' })
       );
+      sleepSpy.mockRestore();
+    });
+
+    test('rate-limit retries apply deterministic spread to reduce synchronized retries', async () => {
+      mockDependencyManager.buildDependencyGraph.mockResolvedValue({
+        nodes: ['spec-alpha', 'spec-beta'],
+        edges: [],
+      });
+      mockConfig.getConfig.mockResolvedValue({
+        maxParallel: 2,
+        maxRetries: 1,
+        rateLimitBackoffBaseMs: 200,
+        rateLimitBackoffMaxMs: 10000,
+        rateLimitAdaptiveParallel: false,
+        rateLimitRetrySpreadMs: 200,
+        rateLimitDecisionEventThrottleMs: 0,
+      });
+
+      engine._random = () => 0; // base backoff = 100ms
+      const sleepSpy = jest.spyOn(engine, '_sleep').mockResolvedValue(undefined);
+      const attempts = new Map();
+      const rateLimitedEvents = [];
+      engine.on('spec:rate-limited', (event) => {
+        rateLimitedEvents.push(event);
+      });
+
+      mockSpawner.spawn.mockImplementation((specName) => {
+        const attempt = (attempts.get(specName) || 0) + 1;
+        attempts.set(specName, attempt);
+        const agentId = `agent-${specName}-${attempt}`;
+        process.nextTick(() => {
+          if (attempt === 1) {
+            mockSpawner.emit('agent:failed', {
+              agentId,
+              specName,
+              exitCode: 1,
+              stderr: '429 Too Many Requests',
+            });
+            return;
+          }
+          mockSpawner.emit('agent:completed', { agentId, specName, exitCode: 0 });
+        });
+        return Promise.resolve({ agentId, specName, status: 'running' });
+      });
+
+      const result = await engine.start(['spec-alpha', 'spec-beta']);
+
+      expect(result.status).toBe('completed');
+      const retrySleeps = sleepSpy.mock.calls.map(([ms]) => ms).filter((ms) => ms > 0);
+      expect(retrySleeps).toHaveLength(2);
+      expect(retrySleeps.every((ms) => ms >= 100 && ms <= 300)).toBe(true);
+      expect(retrySleeps.some((ms) => ms > 100)).toBe(true);
+      expect(rateLimitedEvents).toHaveLength(2);
+      expect(rateLimitedEvents[0]).toEqual(expect.objectContaining({
+        retryBaseDelayMs: 100,
+        retryHintMs: 0,
+        retrySpreadMs: expect.any(Number),
+      }));
+      expect(rateLimitedEvents[1]).toEqual(expect.objectContaining({
+        retryBaseDelayMs: 100,
+        retryHintMs: 0,
+        retrySpreadMs: expect.any(Number),
+      }));
+      sleepSpy.mockRestore();
+    });
+
+    test('launch hold polling interval is configurable and emits machine-readable decision events', async () => {
+      let now = 0;
+      engine._now = () => now;
+      engine._applyRetryPolicyConfig({
+        rateLimitLaunchHoldPollMs: 250,
+        rateLimitDecisionEventThrottleMs: 0,
+      });
+      engine._initializeAdaptiveParallel(1);
+      engine._rateLimitLaunchHoldUntil = 1000;
+
+      const decisions = [];
+      engine.on('rate-limit:decision', (event) => {
+        decisions.push(event);
+      });
+
+      const sleepSpy = jest.spyOn(engine, '_sleep').mockImplementation(async (ms) => {
+        now += ms;
+      });
+      const executeSpy = jest.spyOn(engine, '_executeSpec').mockResolvedValue(undefined);
+
+      await engine._executeSpecsInParallel(['spec-a'], 1, 0);
+
+      expect(executeSpy).toHaveBeenCalledWith('spec-a', 0);
+      expect(sleepSpy.mock.calls.map(([ms]) => ms)).toEqual([250, 250, 250, 250]);
+      expect(decisions).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          decision: 'launch-hold',
+          reason: 'rate-limit-retry-hold',
+          sleepMs: 250,
+        })
+      ]));
+
+      executeSpy.mockRestore();
       sleepSpy.mockRestore();
     });
 

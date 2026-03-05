@@ -57,6 +57,9 @@ describe('OrchestratorConfig', () => {
         rateLimitSignalThreshold: 3,
         rateLimitSignalExtraHoldMs: 3000,
         rateLimitDynamicBudgetFloor: 1,
+        rateLimitRetrySpreadMs: 600,
+        rateLimitLaunchHoldPollMs: 1000,
+        rateLimitDecisionEventThrottleMs: 1000,
         apiKeyEnvVar: 'CODEX_API_KEY',
         bootstrapTemplate: null,
         codexArgs: [],
@@ -78,6 +81,7 @@ describe('OrchestratorConfig', () => {
         'rateLimitLaunchBudgetPerMinute', 'rateLimitLaunchBudgetWindowMs',
         'rateLimitSignalWindowMs', 'rateLimitSignalThreshold', 'rateLimitSignalExtraHoldMs',
         'rateLimitDynamicBudgetFloor',
+        'rateLimitRetrySpreadMs', 'rateLimitLaunchHoldPollMs', 'rateLimitDecisionEventThrottleMs',
         'apiKeyEnvVar', 'bootstrapTemplate', 'codexArgs',
         'codexCommand',
       ];
@@ -128,6 +132,9 @@ describe('OrchestratorConfig', () => {
       expect(result.rateLimitSignalThreshold).toBe(3);
       expect(result.rateLimitSignalExtraHoldMs).toBe(3000);
       expect(result.rateLimitDynamicBudgetFloor).toBe(1);
+      expect(result.rateLimitRetrySpreadMs).toBe(600);
+      expect(result.rateLimitLaunchHoldPollMs).toBe(1000);
+      expect(result.rateLimitDecisionEventThrottleMs).toBe(1000);
       expect(result.apiKeyEnvVar).toBe('CODEX_API_KEY');
       expect(result.bootstrapTemplate).toBeNull();
       expect(result.codexArgs).toEqual([]);
@@ -154,6 +161,9 @@ describe('OrchestratorConfig', () => {
         rateLimitSignalThreshold: 4,
         rateLimitSignalExtraHoldMs: 5000,
         rateLimitDynamicBudgetFloor: 2,
+        rateLimitRetrySpreadMs: 400,
+        rateLimitLaunchHoldPollMs: 1500,
+        rateLimitDecisionEventThrottleMs: 2500,
         apiKeyEnvVar: 'CLAUDE_API_KEY',
         bootstrapTemplate: 'templates/custom.md',
         codexArgs: ['--model', 'gpt-4'],

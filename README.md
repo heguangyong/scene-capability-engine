@@ -121,6 +121,7 @@ SCE is tool-agnostic and works with Codex, Claude Code, Cursor, Windsurf, VS Cod
 - Session governance is scene-first: `1 scene = 1 primary session`.
 - Spec work is attached as child sessions and auto-archived.
 - Startup now auto-detects adopted projects and aligns takeover baseline defaults automatically.
+- Multi-agent anti-429 runtime now supports deterministic retry spread and machine-readable `rate-limit:decision` telemetry (`rateLimitRetrySpreadMs`, `rateLimitLaunchHoldPollMs`, `rateLimitDecisionEventThrottleMs`).
 - Problem evaluation policy is enabled by default (`.sce/config/problem-eval-policy.json`) and evaluates every Studio stage.
 - Problem closure policy is enabled by default (`.sce/config/problem-closure-policy.json`) and blocks verify/release bypass when required domain/problem evidence is missing.
 - Error handling now follows a full incident loop by default: every record attempt is staged first and auto-closed on verified/promoted outcomes.

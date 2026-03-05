@@ -23,6 +23,9 @@ This document defines the default anti-429 presets used by SCE multi-agent orche
 | `rateLimitSignalThreshold` | 2 | 3 | 4 |
 | `rateLimitSignalExtraHoldMs` | 5000 | 3000 | 2000 |
 | `rateLimitDynamicBudgetFloor` | 1 | 1 | 2 |
+| `rateLimitRetrySpreadMs` | 1200 | 600 | 250 |
+| `rateLimitLaunchHoldPollMs` | 1000 | 1000 | 1000 |
+| `rateLimitDecisionEventThrottleMs` | 1000 | 1000 | 1000 |
 
 ## Usage
 
@@ -64,3 +67,4 @@ Release readiness criteria:
 1. No failing test in orchestrator/rate-limit scope.
 2. `orchestrate profile show --json` returns expected profile and effective values.
 3. Multi-agent run no longer stalls under sustained `429`; launch budget and hold telemetry progress over time.
+4. `rate-limit:decision` events are emitted as machine-readable telemetry for retry/throttle/recovery transitions.

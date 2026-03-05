@@ -1796,6 +1796,9 @@ Recommended `.sce/config/orchestrator.json`:
   "rateLimitSignalThreshold": 3,
   "rateLimitSignalExtraHoldMs": 3000,
   "rateLimitDynamicBudgetFloor": 1,
+  "rateLimitRetrySpreadMs": 600,
+  "rateLimitLaunchHoldPollMs": 1000,
+  "rateLimitDecisionEventThrottleMs": 1000,
   "apiKeyEnvVar": "CODEX_API_KEY",
   "codexArgs": ["--skip-git-repo-check"],
   "codexCommand": "npx @openai/codex"
@@ -1809,8 +1812,13 @@ Recommended `.sce/config/orchestrator.json`:
 - `rateLimitSignalThreshold`: signals required inside window before escalation
 - `rateLimitSignalExtraHoldMs`: extra launch hold per escalation unit
 - `rateLimitDynamicBudgetFloor`: lowest dynamic launch budget allowed during sustained pressure
+- `rateLimitRetrySpreadMs`: deterministic retry spread (per spec/retry round) to reduce synchronized retry bursts
+- `rateLimitLaunchHoldPollMs`: polling interval while launch hold is active (lower values react faster, higher values reduce loop overhead)
+- `rateLimitDecisionEventThrottleMs`: de-dup interval for repeated `rate-limit:decision` telemetry events
 
 `orchestrate stop` interrupts pending retry waits immediately so long backoff windows do not look like deadlocks.
+
+Runtime emits machine-readable `rate-limit:decision` events for retry/throttle/hold/recovery transitions, so UI or controller layers can surface anti-429 actions directly.
 
 Codex sub-agent permission defaults:
 - `--sandbox danger-full-access` is always injected by orchestrator runtime.

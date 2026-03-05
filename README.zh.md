@@ -121,6 +121,7 @@ SCE 对工具无锁定，可接入 Codex、Claude Code、Cursor、Windsurf、VS 
 - 会话治理默认场景优先：`1 scene = 1 primary session`。
 - Spec 执行作为子会话自动归档，支持跨轮次追踪。
 - 启动时会自动识别已接管项目并对齐接管基线默认配置。
+- 多 Agent 抗 429 运行时新增“确定性重试错峰 + 机器可读 `rate-limit:decision` 事件”，可通过 `rateLimitRetrySpreadMs`、`rateLimitLaunchHoldPollMs`、`rateLimitDecisionEventThrottleMs` 调优。
 - 问题评估策略默认启用（`.sce/config/problem-eval-policy.json`），Studio 各阶段都会执行评估。
 - 问题闭环策略默认启用（`.sce/config/problem-closure-policy.json`），缺失必要问题/领域证据时会在 verify/release 阶段阻断。
 - 错误处理默认进入完整 incident 闭环：每次记录先落到 staging 试错链路，verified/promoted 后自动收束归档。
