@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.12] - 2026-03-06
+
+### Added
+- Magicball task quality governance integration guide:
+  - `docs/magicball-task-quality-governance.md`
+
 ## [3.6.11] - 2026-03-05
 
 ### Added
