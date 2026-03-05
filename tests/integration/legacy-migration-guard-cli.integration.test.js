@@ -1,58 +1,13 @@
 const fs = require('fs-extra');
 const os = require('os');
 const path = require('path');
-const { spawn } = require('child_process');
+const { runCliWithRetry } = require('./cli-runner');
 
 function runCli(args, options = {}) {
-  const binPath = path.join(__dirname, '..', '..', 'bin', 'scene-capability-engine.js');
-  const cwd = options.cwd || process.cwd();
-  const timeoutMs = options.timeoutMs || 15000;
-
-  return new Promise((resolve, reject) => {
-    let stdout = '';
-    let stderr = '';
-    let timedOut = false;
-
-    const child = spawn(
-      'node',
-      [binPath, '--no-version-check', '--skip-steering-check', ...args],
-      {
-        cwd,
-        env: process.env,
-        shell: false
-      }
-    );
-
-    const timeout = setTimeout(() => {
-      timedOut = true;
-      child.kill('SIGTERM');
-    }, timeoutMs);
-
-    child.stdout.on('data', (data) => {
-      stdout += data.toString();
-    });
-
-    child.stderr.on('data', (data) => {
-      stderr += data.toString();
-    });
-
-    child.on('close', (code) => {
-      clearTimeout(timeout);
-      if (timedOut) {
-        reject(new Error(`CLI command timed out after ${timeoutMs}ms`));
-        return;
-      }
-      resolve({
-        exitCode: typeof code === 'number' ? code : 1,
-        stdout,
-        stderr
-      });
-    });
-
-    child.on('error', (error) => {
-      clearTimeout(timeout);
-      reject(error);
-    });
+  return runCliWithRetry(args, {
+    cwd: options.cwd || process.cwd(),
+    timeoutMs: options.timeoutMs || 15000,
+    maxTransientRetries: options.maxTransientRetries || 1
   });
 }
 

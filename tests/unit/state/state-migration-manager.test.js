@@ -211,6 +211,123 @@ describe('state-migration-manager', () => {
         }
       }
     }, { spaces: 2 });
+
+    await fs.ensureDir(path.join(tempDir, '.sce', 'reports', 'release-evidence'));
+    await fs.writeJson(path.join(tempDir, '.sce', 'reports', 'release-evidence', 'handoff-runs.json'), {
+      schema_version: '1.0',
+      generated_at: '2026-03-05T01:00:00.000Z',
+      updated_at: '2026-03-05T01:00:00.000Z',
+      sessions: [
+        {
+          session_id: 'release-session-1',
+          merged_at: '2026-03-05T00:58:00.000Z',
+          status: 'completed',
+          gate: {
+            passed: true,
+            actual: {
+              spec_success_rate_percent: 100,
+              risk_level: 'low',
+              ontology_quality_score: 88
+            }
+          },
+          capability_coverage: {
+            summary: {
+              coverage_percent: 100,
+              passed: true
+            }
+          },
+          scene_package_batch: {
+            summary: {
+              batch_gate_passed: true,
+              batch_gate_failure_count: 0
+            }
+          },
+          batch_summary: {
+            failed_goals: 0
+          },
+          release_gate_preflight: {
+            available: true,
+            blocked: false
+          }
+        },
+        {
+          session_id: 'release-session-2',
+          merged_at: '2026-03-05T00:59:00.000Z',
+          status: 'completed',
+          gate: {
+            passed: false,
+            actual: {
+              spec_success_rate_percent: 90,
+              risk_level: 'medium',
+              ontology_quality_score: 74
+            }
+          },
+          capability_coverage: {
+            summary: {
+              coverage_percent: 96,
+              passed: true
+            }
+          },
+          scene_package_batch: {
+            summary: {
+              batch_gate_passed: false,
+              batch_gate_failure_count: 1
+            }
+          },
+          batch_summary: {
+            failed_goals: 1
+          },
+          release_gate_preflight: {
+            available: true,
+            blocked: true
+          }
+        }
+      ]
+    }, { spaces: 2 });
+
+    await fs.writeJson(path.join(tempDir, '.sce', 'reports', 'release-evidence', 'release-gate-history.json'), {
+      schema_version: '1.0',
+      generated_at: '2026-03-05T01:00:00.000Z',
+      updated_at: '2026-03-05T01:00:00.000Z',
+      entries: [
+        {
+          tag: 'v3.6.4',
+          evaluated_at: '2026-03-05T00:50:00.000Z',
+          gate_passed: true,
+          enforce: true,
+          risk_level: 'low',
+          spec_success_rate_percent: 100,
+          scene_package_batch_passed: true,
+          scene_package_batch_failure_count: 0,
+          capability_expected_unknown_count: 0,
+          capability_provided_unknown_count: 0,
+          release_gate_preflight_available: true,
+          release_gate_preflight_blocked: false,
+          require_release_gate_preflight: true,
+          drift_alert_count: 0,
+          drift_blocked: false,
+          weekly_ops_blocked: false
+        },
+        {
+          tag: 'v3.6.5',
+          evaluated_at: '2026-03-05T00:55:00.000Z',
+          gate_passed: false,
+          enforce: false,
+          risk_level: 'medium',
+          spec_success_rate_percent: 92,
+          scene_package_batch_passed: false,
+          scene_package_batch_failure_count: 1,
+          capability_expected_unknown_count: 1,
+          capability_provided_unknown_count: 0,
+          release_gate_preflight_available: true,
+          release_gate_preflight_blocked: true,
+          require_release_gate_preflight: false,
+          drift_alert_count: 1,
+          drift_blocked: true,
+          weekly_ops_blocked: true
+        }
+      ]
+    }, { spaces: 2 });
   }
 
   test('builds migration plan from file-based state artifacts', async () => {
@@ -223,7 +340,7 @@ describe('state-migration-manager', () => {
     });
 
     expect(plan.mode).toBe('state-plan');
-    expect(plan.components).toHaveLength(7);
+    expect(plan.components).toHaveLength(9);
     expect(plan.components.find((item) => item.id === 'collab.agent-registry')).toEqual(expect.objectContaining({
       source_record_count: 2,
       status: 'ready'
@@ -249,6 +366,14 @@ describe('state-migration-manager', () => {
       status: 'ready'
     }));
     expect(plan.components.find((item) => item.id === 'governance.scene-index')).toEqual(expect.objectContaining({
+      source_record_count: 2,
+      status: 'ready'
+    }));
+    expect(plan.components.find((item) => item.id === 'release.evidence-runs-index')).toEqual(expect.objectContaining({
+      source_record_count: 2,
+      status: 'ready'
+    }));
+    expect(plan.components.find((item) => item.id === 'release.gate-history-index')).toEqual(expect.objectContaining({
       source_record_count: 2,
       status: 'ready'
     }));
@@ -286,8 +411,8 @@ describe('state-migration-manager', () => {
       stateStore
     });
     expect(applied.success).toBe(true);
-    expect(applied.summary.migrated_components).toBe(7);
-    expect(applied.summary.migrated_records).toBe(12);
+    expect(applied.summary.migrated_components).toBe(9);
+    expect(applied.summary.migrated_records).toBe(16);
 
     const doctor = await runStateDoctor({}, {
       projectPath: tempDir,
@@ -298,10 +423,10 @@ describe('state-migration-manager', () => {
     expect(doctor.mode).toBe('state-doctor');
     expect(doctor.checks.every((item) => item.sync_status === 'synced')).toBe(true);
     expect(doctor.summary).toEqual(expect.objectContaining({
-      total_components: 7,
+      total_components: 9,
       pending_components: 0,
-      total_source_records: 12,
-      total_sqlite_records: 12
+      total_source_records: 16,
+      total_sqlite_records: 16
     }));
     expect(doctor.runtime).toEqual(expect.objectContaining({
       timeline: expect.objectContaining({
@@ -334,6 +459,8 @@ describe('state-migration-manager', () => {
     expect(exportPayload.summary.errorbook_incident_index_registry).toBe(1);
     expect(exportPayload.summary.governance_spec_scene_override_registry).toBe(2);
     expect(exportPayload.summary.governance_scene_index_registry).toBe(2);
+    expect(exportPayload.summary.release_evidence_run_registry).toBe(2);
+    expect(exportPayload.summary.release_gate_history_registry).toBe(2);
     expect(await fs.pathExists(path.join(tempDir, '.sce', 'reports', 'state-migration', 'export.json'))).toBe(true);
   });
 });

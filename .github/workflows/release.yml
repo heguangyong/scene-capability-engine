@@ -1157,6 +1157,42 @@ jobs:
           echo "json_file=${INTEGRITY_JSON}" >> "$GITHUB_OUTPUT"
           echo "markdown_file=${INTEGRITY_MD}" >> "$GITHUB_OUTPUT"
 
+      - name: Evaluate state migration reconciliation gate
+        id: state_migration_reconciliation
+        shell: bash
+        env:
+          RELEASE_STATE_MIGRATION_ENFORCE: ${{ vars.KSE_RELEASE_STATE_MIGRATION_ENFORCE }}
+          RELEASE_STATE_MIGRATION_FAIL_ON_ALERT: ${{ vars.KSE_RELEASE_STATE_MIGRATION_FAIL_ON_ALERT }}
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          NOTES_DIR=".sce/reports/release-evidence"
+          RECON_JSON="${NOTES_DIR}/state-migration-reconciliation-${TAG}.json"
+          ENFORCE_RAW="${RELEASE_STATE_MIGRATION_ENFORCE:-false}"
+          ALERT_RAW="${RELEASE_STATE_MIGRATION_FAIL_ON_ALERT:-false}"
+          ENFORCE_NORMALIZED="$(printf '%s' "${ENFORCE_RAW}" | tr '[:upper:]' '[:lower:]')"
+          ALERT_NORMALIZED="$(printf '%s' "${ALERT_RAW}" | tr '[:upper:]' '[:lower:]')"
+
+          mkdir -p "${NOTES_DIR}"
+
+          CMD=(node scripts/state-migration-reconciliation-gate.js --json)
+
+          if [[ "${ENFORCE_NORMALIZED}" == "1" || "${ENFORCE_NORMALIZED}" == "true" || "${ENFORCE_NORMALIZED}" == "yes" || "${ENFORCE_NORMALIZED}" == "y" || "${ENFORCE_NORMALIZED}" == "on" ]]; then
+            CMD+=(--fail-on-pending)
+            echo "[state-migration-reconciliation] mode=enforce"
+          else
+            echo "[state-migration-reconciliation] mode=advisory"
+          fi
+
+          if [[ "${ALERT_NORMALIZED}" == "1" || "${ALERT_NORMALIZED}" == "true" || "${ALERT_NORMALIZED}" == "yes" || "${ALERT_NORMALIZED}" == "y" || "${ALERT_NORMALIZED}" == "on" ]]; then
+            CMD+=(--fail-on-alert)
+          fi
+
+          "${CMD[@]}" > "${RECON_JSON}"
+          cat "${RECON_JSON}"
+
+          echo "json_file=${RECON_JSON}" >> "$GITHUB_OUTPUT"
+
       - name: Publish to npm
         run: npm publish --access public
         env:
@@ -1197,6 +1233,7 @@ jobs:
             ${{ steps.release_risk_remediation.outputs.lines_file }}
             ${{ steps.release_asset_integrity.outputs.json_file }}
             ${{ steps.release_asset_integrity.outputs.markdown_file }}
+            ${{ steps.state_migration_reconciliation.outputs.json_file }}
             ${{ steps.handoff_preflight_gate.outputs.json_file }}
             ${{ steps.moqui_core_regression.outputs.json_file }}
             ${{ steps.moqui_core_regression.outputs.markdown_file }}

@@ -96,7 +96,7 @@ describe('state command', () => {
     });
     expect(doctor.mode).toBe('state-doctor');
     expect(doctor.summary).toEqual(expect.objectContaining({
-      total_components: 7,
+      total_components: 9,
       alert_count: expect.any(Number)
     }));
     expect(doctor.runtime).toEqual(expect.objectContaining({
@@ -127,5 +127,7 @@ describe('state command', () => {
     expect(exported.summary.errorbook_incident_index_registry).toBe(0);
     expect(exported.summary.governance_spec_scene_override_registry).toBe(0);
     expect(exported.summary.governance_scene_index_registry).toBe(0);
+    expect(exported.summary.release_evidence_run_registry).toBe(0);
+    expect(exported.summary.release_gate_history_registry).toBe(0);
   });
 });

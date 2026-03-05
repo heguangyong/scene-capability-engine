@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.6] - 2026-03-05
+
+### Added
+- Stage-4 SQLite migration components for release evidence indexes:
+  - `release.evidence-runs-index` (`.sce/reports/release-evidence/handoff-runs.json`)
+  - `release.gate-history-index` (`.sce/reports/release-evidence/release-gate-history.json`)
+- New SQLite index tables in state store:
+  - `release_evidence_run_registry`
+  - `release_gate_history_registry`
+- New `SceStateStore` APIs:
+  - `upsert/listReleaseEvidenceRunRecords`
+  - `upsert/listReleaseGateHistoryRecords`
+- Release workflow gate integration:
+  - new step `state_migration_reconciliation`
+  - new release asset `.sce/reports/release-evidence/state-migration-reconciliation-<tag>.json`
+
+### Changed
+- `sce state plan/doctor/migrate/export` now includes release-evidence components in migration scope and parity summaries.
+
 ## [3.6.5] - 2026-03-05
 
 ### Added
