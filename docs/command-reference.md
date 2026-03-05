@@ -201,6 +201,22 @@ Task references and studio runtime events are persisted in SQLite state store:
 - In-memory fallback is restricted to `NODE_ENV=test` or `SCE_STATE_ALLOW_MEMORY_FALLBACK=1`.
 - If SQLite runtime support is unavailable outside fallback conditions, `task ref/show/rerun` and `studio events` persistence operations fail fast.
 
+#### Task Quality Governance (draft -> score -> promote)
+
+```bash
+# Create draft from dialogue
+sce task draft --scene scene.customer-order --input "Fix checkout timeout and add retry dashboard" --json
+
+# Consolidate drafts for a scene
+sce task consolidate --scene scene.customer-order --json
+
+# Score draft quality
+sce task score --draft <draft-id> --json
+
+# Promote into tasks.md (quality gate enforced unless --force)
+sce task promote --draft <draft-id> --spec 02-00-checkout-optimization --json
+```
+
 ### Context & Prompts
 
 ```bash

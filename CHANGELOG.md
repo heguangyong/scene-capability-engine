@@ -20,6 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Magicball capability iteration docs:
   - `docs/magicball-capability-iteration-ui.md`
   - `docs/magicball-capability-iteration-api.md`
+- Task quality governance commands:
+  - `sce task draft`
+  - `sce task consolidate`
+  - `sce task score`
+  - `sce task promote`
 
 ## [3.6.9] - 2026-03-05
 
