@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.5] - 2026-03-05
+
 ### Added
 - Stage-2 SQLite migration components for Errorbook indexes:
   - `errorbook.entry-index` (`.sce/errorbook/index.json`)
