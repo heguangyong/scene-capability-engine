@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.8] - 2026-03-05
+
+### Added
+- New one-shot state command:
+  - `sce state reconcile --all --apply --json`
+  - runs `doctor -> migrate -> doctor` with before/after drift summary in one payload
+- Release workflow now runs state reconcile before reconciliation gate and uploads:
+  - `state-reconcile-<tag>.json`
+
+### Changed
+- Release workflow state reconciliation gate is now enforce-by-default (`KSE_RELEASE_STATE_MIGRATION_ENFORCE` defaults to `true`).
+- Release workflow Node runtime updated to `22.x` so sqlite-backed reconciliation can run in release pipeline.
+
 ## [3.6.7] - 2026-03-05
 
 ### Fixed

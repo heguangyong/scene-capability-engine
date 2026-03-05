@@ -6,7 +6,8 @@ const {
   runStatePlanCommand,
   runStateDoctorCommand,
   runStateMigrateCommand,
-  runStateExportCommand
+  runStateExportCommand,
+  runStateReconcileCommand
 } = require('../../../lib/commands/state');
 const { SceStateStore } = require('../../../lib/state/sce-state-store');
 
@@ -129,5 +130,24 @@ describe('state command', () => {
     expect(exported.summary.governance_scene_index_registry).toBe(0);
     expect(exported.summary.release_evidence_run_registry).toBe(0);
     expect(exported.summary.release_gate_history_registry).toBe(0);
+
+    const reconcile = await runStateReconcileCommand({
+      all: true,
+      apply: true,
+      json: true
+    }, {
+      projectPath: tempDir,
+      fileSystem: fs,
+      env: { NODE_ENV: 'test' },
+      stateStore
+    });
+    expect(reconcile.mode).toBe('state-reconcile');
+    expect(reconcile.apply).toBe(true);
+    expect(reconcile.summary).toEqual(expect.objectContaining({
+      before_pending_components: expect.any(Number),
+      after_pending_components: 0,
+      migrated_components: expect.any(Number),
+      migrated_records: expect.any(Number)
+    }));
   });
 });

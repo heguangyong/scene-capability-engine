@@ -149,8 +149,10 @@ Studio 任务流输出契约（默认）：
   - `sce state plan --json`
   - `sce state doctor --json`
   - `sce state migrate --all --apply --json`
+  - `sce state reconcile --all --apply --json`（一键执行 doctor -> migrate -> doctor）
   - `sce state export --out .sce/reports/state-migration/state-export.latest.json --json`
   - 对账门禁：`npm run gate:state-migration-reconciliation`
+  - 发布工作流默认对 state reconciliation 启用 enforce，并在发布前执行 reconcile
   - 运行时读取在存在索引数据时优先使用 SQLite（timeline/scene-session 视图）
   - `state doctor` 新增 `summary` 与运行时诊断（`runtime.timeline`、`runtime.scene_session`），可直接读取读源与一致性状态
   - 可迁移组件扩展到 runtime + errorbook + spec-governance + release evidence 索引（`errorbook.entry-index`、`errorbook.incident-index`、`governance.spec-scene-overrides`、`governance.scene-index`、`release.evidence-runs-index`、`release.gate-history-index`）

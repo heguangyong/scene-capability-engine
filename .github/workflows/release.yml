@@ -13,10 +13,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       
-      - name: Setup Node.js 20.x
+      - name: Setup Node.js 22.x
         uses: actions/setup-node@v3
         with:
-          node-version: 20.x
+          node-version: 22.x
           cache: 'npm'
       
       - name: Install dependencies
@@ -51,7 +51,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20.x'
+          node-version: '22.x'
           registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
       
@@ -1157,6 +1157,20 @@ jobs:
           echo "json_file=${INTEGRITY_JSON}" >> "$GITHUB_OUTPUT"
           echo "markdown_file=${INTEGRITY_MD}" >> "$GITHUB_OUTPUT"
 
+      - name: Reconcile state migration indexes
+        id: state_reconcile
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          NOTES_DIR=".sce/reports/release-evidence"
+          RECONCILE_JSON="${NOTES_DIR}/state-reconcile-${TAG}.json"
+
+          mkdir -p "${NOTES_DIR}"
+          node bin/sce.js state reconcile --all --apply --json > "${RECONCILE_JSON}"
+          cat "${RECONCILE_JSON}"
+          echo "json_file=${RECONCILE_JSON}" >> "$GITHUB_OUTPUT"
+
       - name: Evaluate state migration reconciliation gate
         id: state_migration_reconciliation
         shell: bash
@@ -1168,7 +1182,7 @@ jobs:
           TAG="${GITHUB_REF_NAME}"
           NOTES_DIR=".sce/reports/release-evidence"
           RECON_JSON="${NOTES_DIR}/state-migration-reconciliation-${TAG}.json"
-          ENFORCE_RAW="${RELEASE_STATE_MIGRATION_ENFORCE:-false}"
+          ENFORCE_RAW="${RELEASE_STATE_MIGRATION_ENFORCE:-true}"
           ALERT_RAW="${RELEASE_STATE_MIGRATION_FAIL_ON_ALERT:-false}"
           ENFORCE_NORMALIZED="$(printf '%s' "${ENFORCE_RAW}" | tr '[:upper:]' '[:lower:]')"
           ALERT_NORMALIZED="$(printf '%s' "${ALERT_RAW}" | tr '[:upper:]' '[:lower:]')"
@@ -1233,6 +1247,7 @@ jobs:
             ${{ steps.release_risk_remediation.outputs.lines_file }}
             ${{ steps.release_asset_integrity.outputs.json_file }}
             ${{ steps.release_asset_integrity.outputs.markdown_file }}
+            ${{ steps.state_reconcile.outputs.json_file }}
             ${{ steps.state_migration_reconciliation.outputs.json_file }}
             ${{ steps.handoff_preflight_gate.outputs.json_file }}
             ${{ steps.moqui_core_regression.outputs.json_file }}

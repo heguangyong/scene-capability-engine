@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "engine": "sce",
   "managed": true,
-  "last_aligned_sce_version": "3.5.0",
+  "last_aligned_sce_version": "3.6.8",
   "defaults": {
     "autonomous": {
       "enabled": true,

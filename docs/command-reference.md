@@ -719,6 +719,9 @@ sce state migrate --all --json
 # apply migration writes into sqlite index tables
 sce state migrate --all --apply --json
 
+# reconcile in one flow (doctor -> migrate -> doctor)
+sce state reconcile --all --apply --json
+
 # migrate specific components
 sce state migrate --component collab.agent-registry --component runtime.timeline-index --apply --json
 
@@ -756,6 +759,7 @@ SQLite index tables introduced for gradual migration:
 Runtime read preference:
 - timeline/session runtime views now prefer SQLite indexes when indexed rows exist.
 - file artifacts remain source-of-truth for content payload and recovery operations.
+- release workflow runs `state reconcile --all --apply` before reconciliation gate.
 - `sce state doctor --json` now includes:
   - `summary` aggregate (`pending_components`, `total_record_drift`, `blocking_count`, `alert_count`)
   - runtime read diagnostics (`runtime.timeline`, `runtime.scene_session`) with read-source/read-preference and consistency status

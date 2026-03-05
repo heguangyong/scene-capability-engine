@@ -149,8 +149,10 @@ Studio task-stream output contract (default):
   - `sce state plan --json`
   - `sce state doctor --json`
   - `sce state migrate --all --apply --json`
+  - `sce state reconcile --all --apply --json` (doctor -> migrate -> doctor one-shot)
   - `sce state export --out .sce/reports/state-migration/state-export.latest.json --json`
   - reconciliation gate: `npm run gate:state-migration-reconciliation`
+  - release workflow defaults to enforce mode for state reconciliation gate and runs reconcile before publish
   - runtime reads now prefer sqlite indexes for timeline/scene-session views when indexed data exists
   - `state doctor` now emits `summary` and runtime diagnostics (`runtime.timeline`, `runtime.scene_session`) with read-source and consistency status
   - migratable components now include runtime + errorbook + spec-governance + release evidence indexes (`errorbook.entry-index`, `errorbook.incident-index`, `governance.spec-scene-overrides`, `governance.scene-index`, `release.evidence-runs-index`, `release.gate-history-index`)
