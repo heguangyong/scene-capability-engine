@@ -118,4 +118,57 @@ describe('sce-state-store', () => {
       task_key: 'task-1'
     }));
   });
+
+  test('supports auth lease lifecycle and auth events in memory fallback', async () => {
+    const store = new SceStateStore(tempDir, {
+      fileSystem: fs,
+      env: { NODE_ENV: 'test' },
+      sqliteModule: {}
+    });
+
+    const lease = await store.issueAuthLease({
+      subject: 'alice',
+      role: 'maintainer',
+      scope: ['studio:*'],
+      reason: 'unit-test',
+      ttl_minutes: 15
+    });
+    expect(lease).toEqual(expect.objectContaining({
+      lease_id: expect.stringMatching(/^lease-/),
+      subject: 'alice',
+      role: 'maintainer'
+    }));
+
+    const loaded = await store.getAuthLease(lease.lease_id);
+    expect(loaded).toEqual(expect.objectContaining({
+      lease_id: lease.lease_id,
+      subject: 'alice'
+    }));
+
+    const appended = await store.appendAuthEvent({
+      event_type: 'authorization.allowed',
+      action: 'studio:apply',
+      actor: 'alice',
+      lease_id: lease.lease_id,
+      result: 'allow'
+    });
+    expect(appended).toBe(true);
+
+    const events = await store.listAuthEvents({ limit: 10 });
+    expect(Array.isArray(events)).toBe(true);
+    expect(events).toHaveLength(1);
+    expect(events[0]).toEqual(expect.objectContaining({
+      event_type: 'authorization.allowed',
+      action: 'studio:apply',
+      lease_id: lease.lease_id
+    }));
+
+    const revoked = await store.revokeAuthLease(lease.lease_id);
+    expect(revoked).toEqual(expect.objectContaining({
+      lease_id: lease.lease_id
+    }));
+    expect(revoked.revoked_at).toBeTruthy();
+    const active = await store.listAuthLeases({ activeOnly: true, limit: 10 });
+    expect(active).toEqual([]);
+  });
 });

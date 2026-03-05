@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.3] - 2026-03-05
+
+### Added
+- SQLite-backed write authorization lease flow:
+  - new policy baseline: `.sce/config/authorization-policy.json`
+  - new state tables: `auth_lease_registry`, `auth_event_stream`
+  - new commands:
+    - `sce auth grant`
+    - `sce auth status`
+    - `sce auth revoke`
+- New write-authorization module: `lib/security/write-authorization.js`.
+- New unit coverage:
+  - `tests/unit/security/write-authorization.test.js`
+  - `tests/unit/commands/auth.test.js`
+  - extended state-store auth lifecycle tests.
+
+### Changed
+- `studio apply/release/rollback` now support `--auth-lease <lease-id>` and can enforce lease-based write authorization.
+- `task rerun` now supports `--auth-lease <lease-id>` and can enforce lease-based write authorization on non-dry-run operations.
+- Authorization checks and lease audit events are persisted to `.sce/state/sce-state.sqlite`.
+
 ## [3.6.2] - 2026-03-04
 
 ### Changed

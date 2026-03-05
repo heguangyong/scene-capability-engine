@@ -552,6 +552,8 @@ sce studio generate --scene scene.customer-order-inventory --target 331 --json
 
 # Apply generated patch metadata
 sce studio apply --patch-bundle patch-scene.customer-order-inventory-<timestamp> --json
+# Apply with explicit write lease
+sce studio apply --job <job-id> --auth-lease <lease-id> --json
 
 # Record verification result
 sce studio verify --profile standard --json
@@ -560,6 +562,8 @@ sce studio verify --profile strict --json
 # Record release event
 sce studio release --channel dev --profile standard --json
 sce studio release --channel dev --profile strict --json
+# Release with explicit write lease
+sce studio release --job <job-id> --channel dev --auth-lease <lease-id> --json
 
 # Resume from latest or explicit job
 sce studio resume --job <job-id> --json
@@ -571,6 +575,8 @@ sce studio events --job <job-id> --openhands-events ./openhands-events.json --js
 
 # Rollback a job after apply/release
 sce studio rollback --job <job-id> --reason "manual-check-failed" --json
+# Rollback with explicit write lease
+sce studio rollback --job <job-id> --reason "manual-check-failed" --auth-lease <lease-id> --json
 
 # Build scene-organized spec governance portfolio
 sce studio portfolio --json
@@ -583,6 +589,11 @@ sce studio backfill-spec-scenes --scene scene.unassigned --limit 20 --apply --js
 
 # Enforce authorization for a protected action
 SCE_STUDIO_REQUIRE_AUTH=1 SCE_STUDIO_AUTH_PASSWORD=top-secret sce studio apply --job <job-id> --auth-password top-secret --json
+
+# Grant/review/revoke write lease (stored in .sce/state/sce-state.sqlite)
+SCE_AUTH_PASSWORD=top-secret sce auth grant --scope studio:* --reason "maintenance window" --auth-password top-secret --json
+sce auth status --json
+sce auth revoke --lease <lease-id> --reason "window closed" --json
 ```
 
 Studio JSON output now includes a stable UI-oriented task stream contract (in addition to existing `job_*` fields):
@@ -686,6 +697,34 @@ Default policy file (recommended to commit): `.sce/config/studio-security.json`
   "enabled": false,
   "require_auth_for": ["apply", "release", "rollback"],
   "password_env": "SCE_STUDIO_AUTH_PASSWORD"
+}
+```
+
+Write lease model (optional, policy-driven, SQLite-backed):
+- Policy file: `.sce/config/authorization-policy.json`
+- Lease/event persistence: `.sce/state/sce-state.sqlite` (`auth_lease_registry`, `auth_event_stream`)
+- Default protected actions: `studio:apply`, `studio:release`, `studio:rollback`, `task:rerun`
+- Default lease TTL: 15 minutes (`default_ttl_minutes`)
+- Write commands accept `--auth-lease <lease-id>`
+- Policy env overrides:
+  - `SCE_AUTH_REQUIRE_LEASE=1`
+  - `SCE_AUTH_PASSWORD_ENV=<ENV_NAME>`
+  - `SCE_AUTH_ENFORCE_ACTIONS=studio:apply,task:rerun`
+
+Default write authorization policy (recommended to commit): `.sce/config/authorization-policy.json`
+
+```json
+{
+  "enabled": false,
+  "enforce_actions": ["studio:apply", "studio:release", "studio:rollback", "task:rerun"],
+  "default_ttl_minutes": 15,
+  "max_ttl_minutes": 120,
+  "require_password_for_grant": true,
+  "require_password_for_revoke": false,
+  "password_env": "SCE_AUTH_PASSWORD",
+  "default_scope": ["project:*"],
+  "allow_test_bypass": true,
+  "allow_password_as_inline_lease": false
 }
 ```
 

@@ -1,0 +1,19 @@
+{
+  "enabled": false,
+  "enforce_actions": [
+    "studio:apply",
+    "studio:release",
+    "studio:rollback",
+    "task:rerun"
+  ],
+  "default_ttl_minutes": 15,
+  "max_ttl_minutes": 120,
+  "require_password_for_grant": true,
+  "require_password_for_revoke": false,
+  "password_env": "SCE_AUTH_PASSWORD",
+  "default_scope": [
+    "project:*"
+  ],
+  "allow_test_bypass": true,
+  "allow_password_as_inline_lease": false
+}

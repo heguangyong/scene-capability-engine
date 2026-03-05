@@ -145,6 +145,11 @@ Studio task-stream output contract (default):
   - SQLite-only backend (`.sce/state/sce-state.sqlite`)
   - In-memory fallback only in `NODE_ENV=test` or when `SCE_STATE_ALLOW_MEMORY_FALLBACK=1`
   - Outside those conditions, unavailable SQLite support fails fast for task-ref/event persistence
+- Write authorization lease model (SQLite-backed):
+  - policy file: `.sce/config/authorization-policy.json`
+  - grant lease: `sce auth grant --scope studio:* --reason "<reason>" --auth-password <password> --json`
+  - inspect/revoke: `sce auth status --json` / `sce auth revoke --lease <lease-id> --json`
+  - protected writes accept `--auth-lease <lease-id>` on `studio apply/release/rollback` and `task rerun`
 
 ---
 
@@ -201,5 +206,5 @@ MIT. See [LICENSE](LICENSE).
 
 ---
 
-**Version**: 3.6.2  
-**Last Updated**: 2026-03-04
+**Version**: 3.6.3  
+**Last Updated**: 2026-03-05

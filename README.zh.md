@@ -145,6 +145,11 @@ Studio 任务流输出契约（默认）：
   - 仅支持 SQLite 后端（`.sce/state/sce-state.sqlite`）
   - 仅在 `NODE_ENV=test` 或 `SCE_STATE_ALLOW_MEMORY_FALLBACK=1` 时允许内存回退
   - 在上述条件之外若 SQLite 不可用，任务引用/事件持久化会快速失败
+- 写入授权租约模型（SQLite 持久化）：
+  - 策略文件：`.sce/config/authorization-policy.json`
+  - 申请租约：`sce auth grant --scope studio:* --reason "<原因>" --auth-password <密码> --json`
+  - 查看/撤销：`sce auth status --json` / `sce auth revoke --lease <lease-id> --json`
+  - 受保护写操作支持 `--auth-lease <lease-id>`：`studio apply/release/rollback`、`task rerun`
 
 ---
 
@@ -201,5 +206,5 @@ MIT，见 [LICENSE](LICENSE)。
 
 ---
 
-**版本**：3.6.2  
-**最后更新**：2026-03-04
+**版本**：3.6.3  
+**最后更新**：2026-03-05
