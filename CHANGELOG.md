@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Capability library reuse commands:
+  - `sce capability catalog list/search/show`
+  - `sce capability match`
+  - `sce capability use`
+- Magicball capability library integration guide:
+  - `docs/magicball-capability-library.md`
+
 ## [3.6.12] - 2026-03-06
 
 ### Added

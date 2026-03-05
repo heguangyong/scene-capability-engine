@@ -1888,6 +1888,26 @@ Schema references:
 - UI contract: `docs/agent-runtime/capability-iteration-ui.schema.json`
 - Ontology mapping: `docs/ontology/capability-mapping.schema.json`
 
+### Capability Library Reuse (query -> match -> use)
+
+```bash
+# List capability templates
+sce capability catalog list --json
+
+# Search capability templates
+sce capability catalog search "customer order" --json
+
+# Show capability template metadata + payload
+sce capability catalog show customer-order-core --json
+
+# Match capability templates to a spec (uses problem-domain-chain.json)
+sce capability match --spec 01-02-customer-order --json
+sce capability match --spec 01-02-customer-order --query "订单 库存" --limit 5 --json
+
+# Generate a usage plan for a spec
+sce capability use --template customer-order-core --spec 01-02-customer-order --json
+```
+
 ### Scene Package Batch Publish
 
 ```bash
