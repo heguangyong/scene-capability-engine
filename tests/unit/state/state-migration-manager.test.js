@@ -163,6 +163,54 @@ describe('state-migration-manager', () => {
         }
       ]
     }, { spaces: 2 });
+
+    await fs.ensureDir(path.join(tempDir, '.sce', 'spec-governance'));
+    await fs.writeJson(path.join(tempDir, '.sce', 'spec-governance', 'spec-scene-overrides.json'), {
+      schema_version: '1.0',
+      generated_at: '2026-03-05T00:45:00.000Z',
+      updated_at: '2026-03-05T00:45:00.000Z',
+      source: 'studio-scene-backfill',
+      mappings: {
+        '01-00-customer-order': {
+          scene_id: 'scene.customer-order',
+          source: 'scene-backfill',
+          rule_id: 'default',
+          updated_at: '2026-03-05T00:45:00.000Z'
+        },
+        '02-00-warehouse-stock': {
+          scene_id: 'scene.customer-order',
+          source: 'scene-backfill',
+          rule_id: 'default',
+          updated_at: '2026-03-05T00:46:00.000Z'
+        }
+      }
+    }, { spaces: 2 });
+
+    await fs.writeJson(path.join(tempDir, '.sce', 'spec-governance', 'scene-index.json'), {
+      schema_version: '1.0',
+      generated_at: '2026-03-05T00:47:00.000Z',
+      scene_filter: null,
+      scenes: {
+        'scene.customer-order': {
+          total_specs: 2,
+          active_specs: 1,
+          completed_specs: 1,
+          stale_specs: 0,
+          spec_ids: ['01-00-customer-order', '02-00-warehouse-stock'],
+          active_spec_ids: ['01-00-customer-order'],
+          stale_spec_ids: []
+        },
+        'scene.moqui-core': {
+          total_specs: 1,
+          active_specs: 1,
+          completed_specs: 0,
+          stale_specs: 0,
+          spec_ids: ['99-00-moqui-parity'],
+          active_spec_ids: ['99-00-moqui-parity'],
+          stale_spec_ids: []
+        }
+      }
+    }, { spaces: 2 });
   }
 
   test('builds migration plan from file-based state artifacts', async () => {
@@ -175,7 +223,7 @@ describe('state-migration-manager', () => {
     });
 
     expect(plan.mode).toBe('state-plan');
-    expect(plan.components).toHaveLength(5);
+    expect(plan.components).toHaveLength(7);
     expect(plan.components.find((item) => item.id === 'collab.agent-registry')).toEqual(expect.objectContaining({
       source_record_count: 2,
       status: 'ready'
@@ -194,6 +242,14 @@ describe('state-migration-manager', () => {
     }));
     expect(plan.components.find((item) => item.id === 'errorbook.incident-index')).toEqual(expect.objectContaining({
       source_record_count: 1,
+      status: 'ready'
+    }));
+    expect(plan.components.find((item) => item.id === 'governance.spec-scene-overrides')).toEqual(expect.objectContaining({
+      source_record_count: 2,
+      status: 'ready'
+    }));
+    expect(plan.components.find((item) => item.id === 'governance.scene-index')).toEqual(expect.objectContaining({
+      source_record_count: 2,
       status: 'ready'
     }));
   });
@@ -230,8 +286,8 @@ describe('state-migration-manager', () => {
       stateStore
     });
     expect(applied.success).toBe(true);
-    expect(applied.summary.migrated_components).toBe(5);
-    expect(applied.summary.migrated_records).toBe(8);
+    expect(applied.summary.migrated_components).toBe(7);
+    expect(applied.summary.migrated_records).toBe(12);
 
     const doctor = await runStateDoctor({}, {
       projectPath: tempDir,
@@ -242,10 +298,10 @@ describe('state-migration-manager', () => {
     expect(doctor.mode).toBe('state-doctor');
     expect(doctor.checks.every((item) => item.sync_status === 'synced')).toBe(true);
     expect(doctor.summary).toEqual(expect.objectContaining({
-      total_components: 5,
+      total_components: 7,
       pending_components: 0,
-      total_source_records: 8,
-      total_sqlite_records: 8
+      total_source_records: 12,
+      total_sqlite_records: 12
     }));
     expect(doctor.runtime).toEqual(expect.objectContaining({
       timeline: expect.objectContaining({
@@ -276,6 +332,8 @@ describe('state-migration-manager', () => {
     expect(exportPayload.summary.scene_session_cycle_registry).toBe(2);
     expect(exportPayload.summary.errorbook_entry_index_registry).toBe(2);
     expect(exportPayload.summary.errorbook_incident_index_registry).toBe(1);
+    expect(exportPayload.summary.governance_spec_scene_override_registry).toBe(2);
+    expect(exportPayload.summary.governance_scene_index_registry).toBe(2);
     expect(await fs.pathExists(path.join(tempDir, '.sce', 'reports', 'state-migration', 'export.json'))).toBe(true);
   });
 });

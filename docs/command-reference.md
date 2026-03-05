@@ -736,6 +736,8 @@ Current migratable components:
 - `runtime.scene-session-index` (`.sce/session-governance/scene-index.json`)
 - `errorbook.entry-index` (`.sce/errorbook/index.json`)
 - `errorbook.incident-index` (`.sce/errorbook/staging/index.json`)
+- `governance.spec-scene-overrides` (`.sce/spec-governance/spec-scene-overrides.json`)
+- `governance.scene-index` (`.sce/spec-governance/scene-index.json`)
 
 SQLite index tables introduced for gradual migration:
 - `agent_runtime_registry`
@@ -743,6 +745,8 @@ SQLite index tables introduced for gradual migration:
 - `scene_session_cycle_registry`
 - `errorbook_entry_index_registry`
 - `errorbook_incident_index_registry`
+- `governance_spec_scene_override_registry`
+- `governance_scene_index_registry`
 - `state_migration_registry`
 
 Runtime read preference:

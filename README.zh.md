@@ -153,7 +153,7 @@ Studio 任务流输出契约（默认）：
   - 对账门禁：`npm run gate:state-migration-reconciliation`
   - 运行时读取在存在索引数据时优先使用 SQLite（timeline/scene-session 视图）
   - `state doctor` 新增 `summary` 与运行时诊断（`runtime.timeline`、`runtime.scene_session`），可直接读取读源与一致性状态
-  - 可迁移组件扩展到 errorbook 索引（`errorbook.entry-index`、`errorbook.incident-index`）
+  - 可迁移组件扩展到 errorbook + spec-governance 索引（`errorbook.entry-index`、`errorbook.incident-index`、`governance.spec-scene-overrides`、`governance.scene-index`）
 - 写入授权租约模型（SQLite 持久化）：
   - 策略文件：`.sce/config/authorization-policy.json`
   - 申请租约：`sce auth grant --scope studio:* --reason "<原因>" --auth-password <密码> --json`

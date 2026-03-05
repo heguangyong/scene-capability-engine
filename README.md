@@ -153,7 +153,7 @@ Studio task-stream output contract (default):
   - reconciliation gate: `npm run gate:state-migration-reconciliation`
   - runtime reads now prefer sqlite indexes for timeline/scene-session views when indexed data exists
   - `state doctor` now emits `summary` and runtime diagnostics (`runtime.timeline`, `runtime.scene_session`) with read-source and consistency status
-  - migratable components now include errorbook indexes (`errorbook.entry-index`, `errorbook.incident-index`) in addition to runtime registries
+  - migratable components now include errorbook + spec-governance indexes (`errorbook.entry-index`, `errorbook.incident-index`, `governance.spec-scene-overrides`, `governance.scene-index`) in addition to runtime registries
 - Write authorization lease model (SQLite-backed):
   - policy file: `.sce/config/authorization-policy.json`
   - grant lease: `sce auth grant --scope studio:* --reason "<reason>" --auth-password <password> --json`

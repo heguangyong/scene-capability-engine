@@ -11,16 +11,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Stage-2 SQLite migration components for Errorbook indexes:
   - `errorbook.entry-index` (`.sce/errorbook/index.json`)
   - `errorbook.incident-index` (`.sce/errorbook/staging/index.json`)
+- Stage-3 SQLite migration components for spec governance indexes:
+  - `governance.spec-scene-overrides` (`.sce/spec-governance/spec-scene-overrides.json`)
+  - `governance.scene-index` (`.sce/spec-governance/scene-index.json`)
 - New SQLite index tables in state store:
   - `errorbook_entry_index_registry`
   - `errorbook_incident_index_registry`
+  - `governance_spec_scene_override_registry`
+  - `governance_scene_index_registry`
 - New `SceStateStore` APIs:
   - `upsert/listErrorbookEntryIndexRecords`
   - `upsert/listErrorbookIncidentIndexRecords`
+  - `upsert/listGovernanceSpecSceneOverrideRecords`
+  - `upsert/listGovernanceSceneIndexRecords`
 
 ### Changed
-- `sce state plan/doctor/migrate/export` now include Errorbook staged index components in migration scope and parity summaries.
-- State export payload now includes Errorbook index tables for audit/debug snapshots.
+- `sce state plan/doctor/migrate/export` now include spec-governance index components in migration scope and parity summaries.
+- State export payload now includes spec-governance index tables for audit/debug snapshots.
 
 ## [3.6.4] - 2026-03-05
 
