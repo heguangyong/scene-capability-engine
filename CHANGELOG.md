@@ -25,11 +25,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New reconciliation gate script for migration parity checks:
   - `scripts/state-migration-reconciliation-gate.js`
   - npm script: `gate:state-migration-reconciliation`
+- Session runtime diagnostics expansion:
+  - new command: `sce session list`
+  - `sce session show/list` JSON includes `session_source` and `scene_index` consistency metadata
 
 ### Changed
 - Timeline runtime reads now prefer SQLite index entries (`timeline_snapshot_registry`) when available.
 - Scene session listing views now prefer SQLite cycle index entries (`scene_session_cycle_registry`) when available.
 - Agent registry writes now mirror to SQLite agent runtime index (`agent_runtime_registry`) as a best-effort sync.
+- `sce state doctor` now emits aggregate `summary` metrics and runtime read diagnostics (`runtime.timeline`, `runtime.scene_session`) to expose sqlite/file drift status for IDE and CI gates.
 
 ## [3.6.3] - 2026-03-05
 

@@ -174,6 +174,26 @@ describe('state-migration-manager', () => {
     });
     expect(doctor.mode).toBe('state-doctor');
     expect(doctor.checks.every((item) => item.sync_status === 'synced')).toBe(true);
+    expect(doctor.summary).toEqual(expect.objectContaining({
+      total_components: 3,
+      pending_components: 0,
+      total_source_records: 5,
+      total_sqlite_records: 5
+    }));
+    expect(doctor.runtime).toEqual(expect.objectContaining({
+      timeline: expect.objectContaining({
+        read_source: expect.any(String),
+        consistency: expect.objectContaining({
+          status: expect.any(String)
+        })
+      }),
+      scene_session: expect.objectContaining({
+        read_preference: expect.any(String),
+        consistency: expect.objectContaining({
+          status: expect.any(String)
+        })
+      })
+    }));
 
     const exportPayload = await runStateExport({
       out: '.sce/reports/state-migration/export.json'

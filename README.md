@@ -152,6 +152,7 @@ Studio task-stream output contract (default):
   - `sce state export --out .sce/reports/state-migration/state-export.latest.json --json`
   - reconciliation gate: `npm run gate:state-migration-reconciliation`
   - runtime reads now prefer sqlite indexes for timeline/scene-session views when indexed data exists
+  - `state doctor` now emits `summary` and runtime diagnostics (`runtime.timeline`, `runtime.scene_session`) with read-source and consistency status
 - Write authorization lease model (SQLite-backed):
   - policy file: `.sce/config/authorization-policy.json`
   - grant lease: `sce auth grant --scope studio:* --reason "<reason>" --auth-password <password> --json`

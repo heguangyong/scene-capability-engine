@@ -232,12 +232,16 @@ sce session start "ship order workflow hardening" --tool codex --agent-version 1
 sce session resume release-20260224 --status active
 sce session snapshot release-20260224 --summary "post-gate checkpoint" --payload '{"tests_passed":42}' --json
 sce session show release-20260224 --json
+sce session list --limit 20 --json
 ```
 
 Session governance defaults:
 - `1 scene = 1 primary session` (managed by `studio plan --scene ...`)
 - `spec` runs can bind as child sessions (`spec bootstrap|pipeline --scene <scene-id>`)
 - successful `studio release` auto-archives current scene session and opens next cycle session
+- `session show/list` JSON now includes runtime diagnostics:
+  - `session_source`
+  - `scene_index.status` (`aligned`, `pending-sync`, `sqlite-ahead`, etc.)
 
 ### Watch Mode
 
@@ -740,6 +744,9 @@ SQLite index tables introduced for gradual migration:
 Runtime read preference:
 - timeline/session runtime views now prefer SQLite indexes when indexed rows exist.
 - file artifacts remain source-of-truth for content payload and recovery operations.
+- `sce state doctor --json` now includes:
+  - `summary` aggregate (`pending_components`, `total_record_drift`, `blocking_count`, `alert_count`)
+  - runtime read diagnostics (`runtime.timeline`, `runtime.scene_session`) with read-source/read-preference and consistency status
 
 Write lease model (optional, policy-driven, SQLite-backed):
 - Policy file: `.sce/config/authorization-policy.json`

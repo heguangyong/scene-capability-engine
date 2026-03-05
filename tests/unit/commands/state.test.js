@@ -95,6 +95,22 @@ describe('state command', () => {
       stateStore
     });
     expect(doctor.mode).toBe('state-doctor');
+    expect(doctor.summary).toEqual(expect.objectContaining({
+      total_components: 3,
+      alert_count: expect.any(Number)
+    }));
+    expect(doctor.runtime).toEqual(expect.objectContaining({
+      timeline: expect.objectContaining({
+        consistency: expect.objectContaining({
+          status: expect.any(String)
+        })
+      }),
+      scene_session: expect.objectContaining({
+        consistency: expect.objectContaining({
+          status: expect.any(String)
+        })
+      })
+    }));
 
     const exported = await runStateExportCommand({
       out: '.sce/reports/state-migration/export.json',
