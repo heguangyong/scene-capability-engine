@@ -9,6 +9,7 @@ function runCli(args, options = {}) {
   const binPath = path.join(__dirname, '..', '..', 'bin', 'scene-capability-engine.js');
   const cwd = options.cwd || process.cwd();
   const timeoutMs = options.timeoutMs || 10000;
+  const skipSteeringCheck = options.skipSteeringCheck !== false;
 
   return new Promise((resolve, reject) => {
     let stdout = '';
@@ -17,7 +18,12 @@ function runCli(args, options = {}) {
 
     const child = spawn(
       'node',
-      [binPath, '--skip-steering-check', '--no-version-check', ...args],
+      [
+        binPath,
+        '--no-version-check',
+        ...(skipSteeringCheck ? ['--skip-steering-check'] : []),
+        ...args
+      ],
       {
         cwd,
         env: process.env,
@@ -86,5 +92,25 @@ describe('version CLI integration', () => {
     expect(result.exitCode).toBe(0);
     expect(result.stdout.trim()).toBe(packageJson.version);
     expect(await fs.pathExists(path.join(tempDir, '.kiro', 'steering', 'ENVIRONMENT.md'))).toBe(true);
+  });
+
+  test('version command has no steering cleanup side effects', async () => {
+    await fs.ensureDir(path.join(tempDir, '.sce', 'steering', 'compiled'));
+    await fs.writeFile(path.join(tempDir, '.sce', 'steering', 'manifest.yaml'), 'schema_version: 1.0', 'utf8');
+    await fs.writeFile(path.join(tempDir, '.sce', 'steering', 'compiled', 'steering-codex.json'), '{"ok":true}', 'utf8');
+    await fs.writeFile(path.join(tempDir, '.sce', 'steering', 'legacy-temp.txt'), 'keep', 'utf8');
+
+    const result = await runCli(['--version'], { cwd: tempDir, skipSteeringCheck: false });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout.trim()).toBe(packageJson.version);
+    expect(await fs.pathExists(path.join(tempDir, '.sce', 'steering', 'manifest.yaml'))).toBe(true);
+    expect(await fs.pathExists(path.join(tempDir, '.sce', 'steering', 'compiled', 'steering-codex.json'))).toBe(true);
+    expect(await fs.pathExists(path.join(tempDir, '.sce', 'steering', 'legacy-temp.txt'))).toBe(true);
+
+    const backupDir = path.join(tempDir, '.sce', 'backups');
+    const backups = await fs.pathExists(backupDir) ? await fs.readdir(backupDir) : [];
+    const cleanupBackups = backups.filter((name) => name.startsWith('steering-cleanup-'));
+    expect(cleanupBackups).toHaveLength(0);
   });
 });

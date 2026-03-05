@@ -21,15 +21,23 @@ describe('SteeringComplianceChecker', () => {
   });
 
   describe('getAllowedFiles', () => {
-    test('returns exactly four allowed files', () => {
+    test('returns expected allowed files including manifest', () => {
       const allowed = checker.getAllowedFiles();
-      expect(allowed).toHaveLength(4);
+      expect(allowed).toHaveLength(5);
       expect(allowed).toEqual([
         'CORE_PRINCIPLES.md',
         'ENVIRONMENT.md',
         'CURRENT_CONTEXT.md',
-        'RULES_GUIDE.md'
+        'RULES_GUIDE.md',
+        'manifest.yaml'
       ]);
+    });
+  });
+
+  describe('getAllowedDirectories', () => {
+    test('returns compiled as allowlisted steering directory', () => {
+      const allowed = checker.getAllowedDirectories();
+      expect(allowed).toEqual(['compiled']);
     });
   });
 
@@ -54,6 +62,8 @@ describe('SteeringComplianceChecker', () => {
       fs.mkdirSync(tempDir, { recursive: true });
       fs.writeFileSync(path.join(tempDir, 'CORE_PRINCIPLES.md'), '# Core Principles');
       fs.writeFileSync(path.join(tempDir, 'ENVIRONMENT.md'), '# Environment');
+      fs.writeFileSync(path.join(tempDir, 'manifest.yaml'), 'schema_version: 1.0');
+      fs.mkdirSync(path.join(tempDir, 'compiled'));
       
       const result = checker.check(tempDir);
       
@@ -131,6 +141,17 @@ describe('SteeringComplianceChecker', () => {
       expect(result.compliant).toBe(false);
       expect(result.violations).toHaveLength(1);
       expect(result.violations[0].name).toBe('.gitkeep');
+    });
+
+    test('runtime lock and pending files are compliant', () => {
+      fs.mkdirSync(tempDir, { recursive: true });
+      fs.writeFileSync(path.join(tempDir, 'CURRENT_CONTEXT.md.lock'), 'lock');
+      fs.writeFileSync(path.join(tempDir, 'CURRENT_CONTEXT.md.pending.agent-1'), 'pending');
+
+      const result = checker.check(tempDir);
+
+      expect(result.compliant).toBe(true);
+      expect(result.violations).toHaveLength(0);
     });
   });
 });

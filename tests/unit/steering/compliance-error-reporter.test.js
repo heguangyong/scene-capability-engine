@@ -20,7 +20,7 @@ describe('ComplianceErrorReporter', () => {
       expect(message).toContain('Disallowed files:');
       expect(message).toContain('analysis.md');
       expect(message).toContain('temp.txt');
-      expect(message).not.toContain('Subdirectories');
+      expect(message).not.toContain('Subdirectories (not allowed):');
       expect(message).toContain('Allowed Files:');
       expect(message).toContain('Fix Suggestions:');
     });
@@ -56,7 +56,7 @@ describe('ComplianceErrorReporter', () => {
       expect(message).toContain('archive/');
     });
 
-    test('includes all four allowed files in message', () => {
+    test('includes allowlisted steering files and runtime entries in message', () => {
       const violations = [
         { type: 'disallowed_file', name: 'temp.txt', path: '/path/to/temp.txt' }
       ];
@@ -67,6 +67,10 @@ describe('ComplianceErrorReporter', () => {
       expect(message).toContain('ENVIRONMENT.md');
       expect(message).toContain('CURRENT_CONTEXT.md');
       expect(message).toContain('RULES_GUIDE.md');
+      expect(message).toContain('manifest.yaml');
+      expect(message).toContain('compiled/');
+      expect(message).toContain('*.lock');
+      expect(message).toContain('*.pending.<agentId>');
     });
 
     test('includes fix suggestions', () => {

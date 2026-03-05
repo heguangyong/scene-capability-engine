@@ -34,6 +34,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Scene session listing views now prefer SQLite cycle index entries (`scene_session_cycle_registry`) when available.
 - Agent registry writes now mirror to SQLite agent runtime index (`agent_runtime_registry`) as a best-effort sync.
 - `sce state doctor` now emits aggregate `summary` metrics and runtime read diagnostics (`runtime.timeline`, `runtime.scene_session`) to expose sqlite/file drift status for IDE and CI gates.
+- Startup compliance behavior hardened to avoid runtime side effects on read-only commands:
+  - `sce --version/-v`, `sce --help/-h`, `sce help`, and `sce version-info` now skip steering cleanup checks.
+  - steering compliance allowlist now includes `.sce/steering/manifest.yaml`, `compiled/`, and runtime lock/pending files.
 
 ## [3.6.3] - 2026-03-05
 

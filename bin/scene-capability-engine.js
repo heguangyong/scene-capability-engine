@@ -162,6 +162,9 @@ function isLegacyMigrationAllowlistedCommand(args) {
   if (command === 'help') {
     return true;
   }
+  if (command === 'version-info') {
+    return true;
+  }
 
   if (command === 'workspace') {
     const subcommand = args[commandIndex + 1];
@@ -194,6 +197,30 @@ function isTakeoverAutoApplySkippedCommand(args) {
 
   const subcommand = args[commandIndex + 1];
   return subcommand === 'takeover-audit';
+}
+
+/**
+ * Commands/options that must be read-only and have no runtime side effects.
+ *
+ * @param {string[]} args
+ * @returns {boolean}
+ */
+function isNoMutationCommand(args) {
+  if (!Array.isArray(args) || args.length === 0) {
+    return false;
+  }
+
+  if (args.includes('-v') || args.includes('--version') || args.includes('-h') || args.includes('--help')) {
+    return true;
+  }
+
+  const commandIndex = findCommandIndex(args);
+  if (commandIndex < 0) {
+    return false;
+  }
+
+  const command = args[commandIndex];
+  return command === 'help' || command === 'version-info';
 }
 
 // 版本和基本信息
@@ -1076,7 +1103,8 @@ async function updateProjectConfig(projectName) {
   const args = process.argv.slice(2);
   const isLegacyAllowlistedCommand = isLegacyMigrationAllowlistedCommand(args);
   const skipAutoTakeover = isTakeoverAutoApplySkippedCommand(args);
-  const skipCheck = args.includes('--skip-steering-check') || 
+  const skipCheck = isNoMutationCommand(args) ||
+                    args.includes('--skip-steering-check') || 
                     process.env.KSE_SKIP_STEERING_CHECK === '1';
   const forceCheck = args.includes('--force-steering-check');
 
