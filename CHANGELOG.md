@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.11] - 2026-03-05
+
+### Added
+- Task quality governance commands:
+  - `sce task draft`
+  - `sce task consolidate`
+  - `sce task score`
+  - `sce task promote`
+- Task quality policy support:
+  - `.sce/config/task-quality-policy.json`
+  - policy overrides via `--policy <path>`
+- Task promotion now emits acceptance suggestions when acceptance criteria are missing.
+
 ## [3.6.10] - 2026-03-05
 
 ### Added
@@ -20,14 +33,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Magicball capability iteration docs:
   - `docs/magicball-capability-iteration-ui.md`
   - `docs/magicball-capability-iteration-api.md`
-- Task quality governance commands:
-  - `sce task draft`
-  - `sce task consolidate`
-  - `sce task score`
-  - `sce task promote`
-- Task quality policy support:
-  - `.sce/config/task-quality-policy.json`
-  - policy overrides via `--policy <path>`
 
 ## [3.6.9] - 2026-03-05
 
