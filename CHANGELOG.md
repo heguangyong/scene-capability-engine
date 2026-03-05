@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.4] - 2026-03-05
+
 ### Added
 - Gradual state migration command group:
   - `sce state plan`
