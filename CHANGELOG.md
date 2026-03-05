@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.10] - 2026-03-05
+
 ### Added
 - Capability iteration CLI for scene/spec/task history:
   - `sce capability extract`
@@ -15,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `sce capability register`
 - Extracted capability candidates now include task summaries and scene/spec provenance for UI governance workflows.
 - Added schema references for capability iteration UI contract and ontology mapping.
+- Magicball capability iteration docs:
+  - `docs/magicball-capability-iteration-ui.md`
+  - `docs/magicball-capability-iteration-api.md`
 
 ## [3.6.9] - 2026-03-05
 
