@@ -52,6 +52,10 @@ describe('timeline commands', () => {
       projectPath: tempDir
     });
     expect(listed.total).toBe(1);
+    expect(listed.read_source).toBe('sqlite');
+    expect(listed.consistency).toEqual(expect.objectContaining({
+      status: expect.any(String)
+    }));
 
     const shown = await runTimelineShowCommand(saved.snapshot.snapshot_id, {
       json: true
@@ -60,6 +64,10 @@ describe('timeline commands', () => {
     });
 
     expect(shown.success).toBe(true);
+    expect(shown.read_source).toBe('sqlite');
+    expect(shown.consistency).toEqual(expect.objectContaining({
+      status: expect.any(String)
+    }));
     expect(shown.snapshot.summary).toBe('first save');
     expect(shown.files.file_count).toBeGreaterThanOrEqual(2);
   });

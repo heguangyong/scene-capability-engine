@@ -116,5 +116,20 @@ describe('steering + session commands', () => {
     await program.parseAsync(['node', 'sce', 'session', 'show', 'sess-001', '--json']);
     payload = parseSingleJsonLog();
     expect(payload.session.session_id).toBe('sess-001');
+    expect(payload.session_source).toBe('file');
+    expect(payload.scene_index).toEqual(expect.objectContaining({
+      status: expect.any(String)
+    }));
+
+    logSpy.mockClear();
+    await program.parseAsync(['node', 'sce', 'session', 'list', '--limit', '5', '--json']);
+    payload = parseSingleJsonLog();
+    expect(payload.action).toBe('session_list');
+    expect(Array.isArray(payload.sessions)).toBe(true);
+    expect(payload.sessions.length).toBeGreaterThanOrEqual(1);
+    expect(payload.session_source).toBe('file');
+    expect(payload.scene_index).toEqual(expect.objectContaining({
+      status: expect.any(String)
+    }));
   });
 });

@@ -128,5 +128,11 @@ describe('SessionStore', () => {
       scene_id: 'scene.sqlite-fallback'
     }));
     expect(Array.isArray(records[0].cycles)).toBe(true);
+
+    const diagnostics = await store.getSceneIndexDiagnostics();
+    expect(diagnostics).toEqual(expect.objectContaining({
+      read_preference: 'sqlite',
+      status: expect.any(String)
+    }));
   });
 });
