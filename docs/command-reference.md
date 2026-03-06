@@ -1902,6 +1902,9 @@ sce capability register --input .sce/reports/capability-iteration/scene.customer
 
 Schema references:
 - UI contract: `docs/agent-runtime/capability-iteration-ui.schema.json`
+- Magicball shared status: `docs/agent-runtime/magicball-status.schema.json`
+- Magicball task feedback: `docs/agent-runtime/magicball-task-feedback.schema.json`
+- Magicball timeline view: `docs/agent-runtime/magicball-timeline-view.schema.json`
 - Ontology mapping: `docs/ontology/capability-mapping.schema.json`
 
 ### Capability Library Reuse (query -> match -> use)

@@ -2,6 +2,8 @@
 
 > 目标：在 Magicball UI 中提供“能力库检索/匹配/使用”闭环，加速场景能力落地。
 
+Schema reference: `docs/agent-runtime/magicball-status.schema.json`
+
 ## 1. 能力库复用流程
 
 能力模板进入能力库前，默认要求补齐本体三项核心能力：

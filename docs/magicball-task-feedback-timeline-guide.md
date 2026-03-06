@@ -4,6 +4,12 @@
 
 ## 1. 任务反馈模型（来源：`sce studio events --json`）
 
+Schema references:
+- `docs/agent-runtime/magicball-status.schema.json`
+- `docs/agent-runtime/magicball-task-feedback.schema.json`
+- `docs/agent-runtime/magicball-timeline-view.schema.json`
+
+
 SCE 现在在 `task` 下增加：
 - `feedback_model.version`
 - `feedback_model.problem`

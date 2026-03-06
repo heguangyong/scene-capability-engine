@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.29] - 2026-03-06
+
+### Added
+- Added shared Magicball schemas for status, task feedback, and timeline view contracts.
+- Command reference and Magicball integration docs now reference the shared schemas explicitly.
+
 ## [3.6.28] - 2026-03-06
 
 ### Added

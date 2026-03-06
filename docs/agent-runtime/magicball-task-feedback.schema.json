@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://scene-capability-engine.dev/contracts/magicball-task-feedback.schema.json",
+  "title": "Magicball Task Feedback View Contract",
+  "type": "object",
+  "required": [
+    "version",
+    "problem",
+    "execution",
+    "diagnosis",
+    "evidence",
+    "next_step",
+    "mb_status"
+  ],
+  "properties": {
+    "version": {
+      "type": "string"
+    },
+    "problem": {
+      "type": "object",
+      "required": ["component", "action", "expected", "actual"],
+      "properties": {
+        "component": { "type": ["string", "null"] },
+        "action": { "type": ["string", "null"] },
+        "expected": { "type": ["string", "null"] },
+        "actual": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "execution": {
+      "type": "object",
+      "required": ["stage", "status", "summary", "blocking_summary"],
+      "properties": {
+        "stage": { "type": "string" },
+        "status": { "type": "string" },
+        "summary": { "type": "array", "items": { "type": "string" } },
+        "blocking_summary": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "diagnosis": {
+      "type": "object",
+      "required": ["hypothesis", "chain_checkpoint", "root_cause_confidence"],
+      "properties": {
+        "hypothesis": { "type": ["string", "null"] },
+        "chain_checkpoint": { "type": "string" },
+        "root_cause_confidence": { "type": "string", "enum": ["low", "medium", "high"] }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["file_count", "file_paths", "command_count", "error_count", "verification_result", "regression_scope"],
+      "properties": {
+        "file_count": { "type": "integer", "minimum": 0 },
+        "file_paths": { "type": "array", "items": { "type": "string" } },
+        "command_count": { "type": "integer", "minimum": 0 },
+        "error_count": { "type": "integer", "minimum": 0 },
+        "verification_result": { "type": "string" },
+        "regression_scope": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "next_step": {
+      "type": "object",
+      "required": ["recommended_action", "next_action", "next_command"],
+      "properties": {
+        "recommended_action": { "type": ["string", "null"] },
+        "next_action": { "type": ["string", "null"] },
+        "next_command": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "mb_status": {
+      "$ref": "./magicball-status.schema.json"
+    }
+  },
+  "additionalProperties": false
+}

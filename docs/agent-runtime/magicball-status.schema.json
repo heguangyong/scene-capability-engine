@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://scene-capability-engine.dev/contracts/magicball-status.schema.json",
+  "title": "Magicball Shared Status Contract",
+  "type": "object",
+  "required": [
+    "attention_level",
+    "status_tone",
+    "status_label",
+    "blocking_summary",
+    "recommended_action"
+  ],
+  "properties": {
+    "attention_level": {
+      "type": "string",
+      "enum": ["critical", "high", "medium", "low"]
+    },
+    "status_tone": {
+      "type": "string",
+      "enum": ["danger", "warning", "info", "success"]
+    },
+    "status_label": {
+      "type": ["string", "null"]
+    },
+    "blocking_summary": {
+      "type": ["string", "null"]
+    },
+    "recommended_action": {
+      "type": ["string", "null"]
+    }
+  },
+  "additionalProperties": false
+}

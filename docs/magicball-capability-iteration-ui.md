@@ -145,6 +145,7 @@ sce capability register --input <template.json> --json
 ## 5. 数据契约（前端对接）
 
 - UI 契约：`docs/agent-runtime/capability-iteration-ui.schema.json`
+- 统一状态语言：`docs/agent-runtime/magicball-status.schema.json`
 - 本体映射 schema：`docs/ontology/capability-mapping.schema.json`
 
 ---

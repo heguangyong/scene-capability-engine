@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://scene-capability-engine.dev/contracts/magicball-timeline-view.schema.json",
+  "title": "Magicball Timeline View Contract",
+  "type": "object",
+  "required": ["summary", "entries"],
+  "properties": {
+    "summary": {
+      "type": "object",
+      "required": ["total", "latest_snapshot_id", "latest_created_at", "dirty_snapshot_count", "scene_count", "trigger_counts"],
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "latest_snapshot_id": { "type": ["string", "null"] },
+        "latest_created_at": { "type": ["string", "null"] },
+        "dirty_snapshot_count": { "type": "integer", "minimum": 0 },
+        "scene_count": { "type": "integer", "minimum": 0 },
+        "trigger_counts": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        }
+      },
+      "additionalProperties": false
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["snapshot_id", "title", "subtitle", "trigger", "event", "created_at", "scene_id", "session_id", "file_count", "branch", "head", "dirty_count", "attention_level", "show_command", "restore_command"],
+        "properties": {
+          "snapshot_id": { "type": ["string", "null"] },
+          "title": { "type": ["string", "null"] },
+          "subtitle": { "type": ["string", "null"] },
+          "trigger": { "type": ["string", "null"] },
+          "event": { "type": ["string", "null"] },
+          "created_at": { "type": ["string", "null"] },
+          "scene_id": { "type": ["string", "null"] },
+          "session_id": { "type": ["string", "null"] },
+          "file_count": { "type": "integer", "minimum": 0 },
+          "branch": { "type": ["string", "null"] },
+          "head": { "type": ["string", "null"] },
+          "dirty_count": { "type": "integer", "minimum": 0 },
+          "attention_level": { "type": "string", "enum": ["high", "medium", "low"] },
+          "show_command": { "type": ["string", "null"] },
+          "restore_command": { "type": ["string", "null"] }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
