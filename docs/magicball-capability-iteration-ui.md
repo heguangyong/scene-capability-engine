@@ -205,4 +205,12 @@ sce capability register --input <template.json> --json
 - 使用 `capability-inventory` 返回的 `query` 作为首页请求回显
 - 使用 `sort` 作为排序策略展示来源
 - 首页筛选器应直接映射：`query.filters.release_ready`、`query.filters.missing_triad`
-- 首页顶部可显示：`scene_total` / `scene_count`
+- 首页顶部可显示：`scene_total` / `scene_count` / `summary_stats`
+
+## 12. 顶部统计卡
+
+- `summary_stats.publish_ready_count`：可发布 scene 数
+- `summary_stats.blocked_count`：被阻断 scene 数
+- `summary_stats.missing_triads.decision_strategy`：缺决策策略数量
+- `summary_stats.missing_triads.business_rules`：缺业务规则数量
+- `summary_stats.missing_triads.entity_relation`：缺实体关系数量

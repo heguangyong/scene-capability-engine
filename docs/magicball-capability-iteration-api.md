@@ -186,5 +186,7 @@ sce capability register --input <template_file> --risk-level <level> --difficult
 - `query.sample_limit`：每个 spec 抽样任务上限
 - `query.filters.release_ready`：发布可用性过滤
 - `query.filters.missing_triad`：triad 缺口过滤
+- `summary_stats.publish_ready_count` / `summary_stats.blocked_count`：顶部统计卡
+- `summary_stats.missing_triads.*`：triad 缺口计数卡
 - `sort.strategy`：默认排序策略说明
 - `sort.triad_priority`：triad 优先级数组

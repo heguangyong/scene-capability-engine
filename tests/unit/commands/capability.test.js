@@ -10,7 +10,8 @@ const {
   runCapabilityInventoryCommand,
   enrichCapabilityTemplateForUi,
   filterCapabilityCatalogEntries,
-  sortCapabilityInventoryEntries
+  sortCapabilityInventoryEntries,
+  buildCapabilityInventorySummaryStats
 } = require('../../../lib/commands/capability');
 
 describe('capability commands', () => {
@@ -232,6 +233,15 @@ describe('capability commands', () => {
     expect(inventory.mode).toBe('capability-inventory');
     expect(inventory.scene_total).toBe(2);
     expect(inventory.scene_count).toBe(2);
+    expect(inventory.summary_stats).toEqual({
+      publish_ready_count: 1,
+      blocked_count: 1,
+      missing_triads: {
+        decision_strategy: 1,
+        business_rules: 1,
+        entity_relation: 0
+      }
+    });
     expect(inventory.query).toEqual(expect.objectContaining({
       protocol_version: '1.0',
       scene_id: null,
@@ -251,6 +261,23 @@ describe('capability commands', () => {
       ontology_core_ui: expect.objectContaining({ ready: false }),
       release_readiness_ui: expect.objectContaining({ publish_ready: false })
     }));
+  });
+
+  test('summarizes capability inventory stats', () => {
+    const summary = buildCapabilityInventorySummaryStats([
+      { release_readiness_ui: { publish_ready: true, blocking_missing: [] } },
+      { release_readiness_ui: { publish_ready: false, blocking_missing: ['decision_strategy', 'business_rules'] } },
+      { release_readiness_ui: { publish_ready: false, blocking_missing: ['entity_relation'] } }
+    ]);
+    expect(summary).toEqual({
+      publish_ready_count: 1,
+      blocked_count: 2,
+      missing_triads: {
+        decision_strategy: 1,
+        business_rules: 1,
+        entity_relation: 1
+      }
+    });
   });
 
   test('sorts capability inventory entries by readiness, triad priority, and value score', () => {

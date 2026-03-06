@@ -667,7 +667,8 @@
         "scene_total",
         "scene_count",
         "sort",
-        "scenes"
+        "scenes",
+        "summary_stats"
       ],
       "properties": {
         "mode": {
@@ -801,6 +802,48 @@
             },
             "additionalProperties": false
           }
+        },
+        "summary_stats": {
+          "type": "object",
+          "required": [
+            "publish_ready_count",
+            "blocked_count",
+            "missing_triads"
+          ],
+          "properties": {
+            "publish_ready_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "blocked_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "missing_triads": {
+              "type": "object",
+              "required": [
+                "decision_strategy",
+                "business_rules",
+                "entity_relation"
+              ],
+              "properties": {
+                "decision_strategy": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "business_rules": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "entity_relation": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false

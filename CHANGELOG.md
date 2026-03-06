@@ -7,10 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.25] - 2026-03-06
+
+### Added
+- Capability inventory now exposes homepage summary stats for publish readiness and triad gap cards.
+- Capability iteration schema and Magicball docs now define the homepage summary card contract.
+
 ## [3.6.24] - 2026-03-06
 
 ### Added
-- Capability inventory payload now exposes fixed homepage query metadata (`query`) and sorting metadata (`sort`).
+- Capability inventory payload now exposes fixed homepage query metadata (`query`), summary stats (`summary_stats`), and sorting metadata (`sort`).
 - Capability iteration schema and Magicball docs now define the fixed homepage inventory protocol.
 
 ## [3.6.23] - 2026-03-06
