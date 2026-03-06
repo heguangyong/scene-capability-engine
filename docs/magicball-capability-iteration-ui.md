@@ -22,6 +22,7 @@
 ├─────────────────────────────────────────────────────────────┤
 │ Scene卡片：scene.customer-order                              │
 │ - spec: 3  tasks: 42  completed: 36  pending: 6             │
+│ - triad: 2/3  missing: decision_strategy                    │
 │ - score: 未评估                                              │
 │ [进入评估]                                                   │
 ├─────────────────────────────────────────────────────────────┤
@@ -36,8 +37,8 @@
 ┌───────────────┬─────────────────────────────────────────────┐
 │ Spec列表      │ 评分卡                                        │
 │ - 01-00-demo  │ value: 78  reuse: 66  stability: 85  risk: 20 │
-│ - 01-01-check │ completion: 0.86                              │
-│ - 01-02-order │                                               │
+│ - 01-01-check │ completion: 0.86  ontology_core: 67           │
+│ - 01-02-order │ missing: business_rules                       │
 ├───────────────┼─────────────────────────────────────────────┤
 │ Task摘要      │ [生成模板候选]                                │
 │ total: 42     │                                               │
@@ -149,8 +150,9 @@ sce capability register --input <template.json> --json
 - 每一步输出的 JSON 都持久化，便于回放/复用
 
 ### 6.2 体验优化
-- Scene 首页显示完成率、待处理数、评分卡入口
-- 评分卡统一可视化（value/reuse/stability/risk）
+- Scene 首页显示完成率、待处理数、triad 覆盖率、缺失项入口
+- 评分卡统一可视化（value/reuse/stability/risk/ontology_core）
+- 盘点页支持按 triad 缺口排序：优先显示缺失 `decision_strategy` / `business_rules` / `entity_relation` 的 scene
 - 本体映射表单应支持快速导入与默认推荐值
 
 ### 6.3 错误处理
@@ -170,3 +172,11 @@ sce capability register --input <template.json> --json
 - `/capability/scene/:sceneId/template` 模板构建页  
 - `/capability/scene/:sceneId/release` 发布页  
 
+
+## 8. 推荐排序字段
+
+- `ontology_core_ui.ready`
+- `ontology_core_ui.coverage_percent`
+- `ontology_core_ui.missing`
+- `summary.ontology_triads_ready`
+- `summary.ontology_missing_triads`

@@ -32,21 +32,37 @@
         "generated_at",
         "source",
         "specs",
-        "summary"
+        "summary",
+        "ontology_scope",
+        "ontology_core"
       ],
       "properties": {
         "mode": {
           "const": "capability-extract"
         },
-        "scene_id": { "type": "string" },
-        "generated_at": { "type": "string" },
-        "output_file": { "type": "string" },
+        "scene_id": {
+          "type": "string"
+        },
+        "generated_at": {
+          "type": "string"
+        },
+        "output_file": {
+          "type": "string"
+        },
         "source": {
           "type": "object",
-          "required": ["scene_index_source", "spec_count"],
+          "required": [
+            "scene_index_source",
+            "spec_count"
+          ],
           "properties": {
-            "scene_index_source": { "type": "string" },
-            "spec_count": { "type": "integer", "minimum": 0 }
+            "scene_index_source": {
+              "type": "string"
+            },
+            "spec_count": {
+              "type": "integer",
+              "minimum": 0
+            }
           },
           "additionalProperties": false
         },
@@ -54,11 +70,21 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["spec_id", "tasks_path", "task_summary"],
+            "required": [
+              "spec_id",
+              "tasks_path",
+              "task_summary"
+            ],
             "properties": {
-              "spec_id": { "type": "string" },
-              "tasks_path": { "type": "string" },
-              "task_error": { "type": "string" },
+              "spec_id": {
+                "type": "string"
+              },
+              "tasks_path": {
+                "type": "string"
+              },
+              "task_error": {
+                "type": "string"
+              },
               "task_summary": {
                 "type": "object",
                 "required": [
@@ -70,12 +96,30 @@
                   "unknown"
                 ],
                 "properties": {
-                  "total": { "type": "integer", "minimum": 0 },
-                  "completed": { "type": "integer", "minimum": 0 },
-                  "in_progress": { "type": "integer", "minimum": 0 },
-                  "queued": { "type": "integer", "minimum": 0 },
-                  "not_started": { "type": "integer", "minimum": 0 },
-                  "unknown": { "type": "integer", "minimum": 0 }
+                  "total": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "completed": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "in_progress": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "queued": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "not_started": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "unknown": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
                 },
                 "additionalProperties": false
               },
@@ -83,14 +127,39 @@
                 "type": "array",
                 "items": {
                   "type": "object",
-                  "required": ["id", "title", "status"],
+                  "required": [
+                    "id",
+                    "title",
+                    "status"
+                  ],
                   "properties": {
-                    "id": { "type": "string" },
-                    "title": { "type": "string" },
-                    "status": { "type": "string" }
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    }
                   },
                   "additionalProperties": false
                 }
+              },
+              "ontology_scope": {
+                "$ref": "#/definitions/ontology_scope"
+              },
+              "ontology_source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ontology_error": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
             "additionalProperties": false
@@ -98,14 +167,54 @@
         },
         "summary": {
           "type": "object",
-          "required": ["spec_count", "task_total", "task_completed", "task_pending"],
+          "required": [
+            "spec_count",
+            "task_total",
+            "task_completed",
+            "task_pending",
+            "ontology_triads_ready",
+            "ontology_triads_coverage_ratio",
+            "ontology_missing_triads"
+          ],
           "properties": {
-            "spec_count": { "type": "integer", "minimum": 0 },
-            "task_total": { "type": "integer", "minimum": 0 },
-            "task_completed": { "type": "integer", "minimum": 0 },
-            "task_pending": { "type": "integer", "minimum": 0 }
+            "spec_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "task_total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "task_completed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "task_pending": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ontology_triads_ready": {
+              "type": "boolean"
+            },
+            "ontology_triads_coverage_ratio": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "ontology_missing_triads": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           },
           "additionalProperties": false
+        },
+        "ontology_scope": {
+          "$ref": "#/definitions/ontology_scope"
+        },
+        "ontology_core": {
+          "$ref": "#/definitions/ontology_core"
         }
       },
       "additionalProperties": false
@@ -120,11 +229,21 @@
         "scores"
       ],
       "properties": {
-        "mode": { "const": "capability-score" },
-        "scene_id": { "type": "string" },
-        "generated_at": { "type": "string" },
-        "input": { "type": "string" },
-        "output_file": { "type": "string" },
+        "mode": {
+          "const": "capability-score"
+        },
+        "scene_id": {
+          "type": "string"
+        },
+        "generated_at": {
+          "type": "string"
+        },
+        "input": {
+          "type": "string"
+        },
+        "output_file": {
+          "type": "string"
+        },
         "scores": {
           "type": "object",
           "required": [
@@ -132,18 +251,53 @@
             "reuse_score",
             "stability_score",
             "risk_score",
+            "ontology_core_score",
+            "ontology_core",
             "value_score"
           ],
           "properties": {
-            "completion_rate": { "type": "number", "minimum": 0, "maximum": 1 },
-            "reuse_score": { "type": "integer", "minimum": 0, "maximum": 100 },
-            "stability_score": { "type": "integer", "minimum": 0, "maximum": 100 },
-            "risk_score": { "type": "integer", "minimum": 0, "maximum": 100 },
-            "value_score": { "type": "integer", "minimum": 0, "maximum": 100 }
+            "completion_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "reuse_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "stability_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "risk_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "value_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "ontology_core_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "ontology_core": {
+              "$ref": "#/definitions/ontology_core"
+            }
           },
           "additionalProperties": false
         },
-        "summary": { "type": ["object", "null"] }
+        "summary": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
       },
       "additionalProperties": false
     },
@@ -157,12 +311,27 @@
         "template"
       ],
       "properties": {
-        "mode": { "const": "capability-map" },
-        "scene_id": { "type": "string" },
-        "generated_at": { "type": "string" },
-        "input": { "type": "string" },
-        "mapping": { "type": ["string", "null"] },
-        "output_file": { "type": "string" },
+        "mode": {
+          "const": "capability-map"
+        },
+        "scene_id": {
+          "type": "string"
+        },
+        "generated_at": {
+          "type": "string"
+        },
+        "input": {
+          "type": "string"
+        },
+        "mapping": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "output_file": {
+          "type": "string"
+        },
         "template": {
           "type": "object",
           "required": [
@@ -174,31 +343,52 @@
             "template_type",
             "scene_id",
             "ontology_scope",
-            "created_at"
+            "created_at",
+            "ontology_core"
           ],
           "properties": {
-            "mode": { "const": "capability-template" },
-            "template_id": { "type": "string" },
-            "name": { "type": "string" },
-            "description": { "type": "string" },
-            "category": { "type": "string" },
-            "template_type": { "const": "capability-template" },
-            "scene_id": { "type": "string" },
-            "tags": { "type": "array", "items": { "type": "string" } },
-            "ontology_scope": {
-              "type": "object",
-              "required": ["domains", "entities", "relations", "business_rules", "decisions"],
-              "properties": {
-                "domains": { "type": "array", "items": { "type": "string" } },
-                "entities": { "type": "array", "items": { "type": "string" } },
-                "relations": { "type": "array", "items": { "type": "string" } },
-                "business_rules": { "type": "array", "items": { "type": "string" } },
-                "decisions": { "type": "array", "items": { "type": "string" } }
-              },
-              "additionalProperties": false
+            "mode": {
+              "const": "capability-template"
             },
-            "created_at": { "type": "string" },
-            "source_candidate": { "type": ["object", "null"] }
+            "template_id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "category": {
+              "type": "string"
+            },
+            "template_type": {
+              "const": "capability-template"
+            },
+            "scene_id": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "ontology_scope": {
+              "$ref": "#/definitions/ontology_scope"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "source_candidate": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "ontology_core": {
+              "$ref": "#/definitions/ontology_core"
+            }
           },
           "additionalProperties": false
         }
@@ -211,13 +401,257 @@
         "mode",
         "template_id",
         "output_dir",
-        "files"
+        "files",
+        "ontology_core"
       ],
       "properties": {
-        "mode": { "const": "capability-register" },
-        "template_id": { "type": "string" },
-        "output_dir": { "type": "string" },
-        "files": { "type": "array", "items": { "type": "string" } }
+        "mode": {
+          "const": "capability-register"
+        },
+        "template_id": {
+          "type": "string"
+        },
+        "output_dir": {
+          "type": "string"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ontology_core": {
+          "$ref": "#/definitions/ontology_core"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ontology_scope": {
+      "type": "object",
+      "required": [
+        "domains",
+        "entities",
+        "relations",
+        "business_rules",
+        "decisions"
+      ],
+      "properties": {
+        "domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "entities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "business_rules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "ontology_core": {
+      "type": "object",
+      "required": [
+        "triads",
+        "passed_count",
+        "total_count",
+        "coverage_ratio",
+        "ready",
+        "missing"
+      ],
+      "properties": {
+        "ontology_scope": {
+          "$ref": "#/definitions/ontology_scope"
+        },
+        "triads": {
+          "type": "object",
+          "required": [
+            "entity_relation",
+            "business_rules",
+            "decision_strategy"
+          ],
+          "properties": {
+            "entity_relation": {
+              "type": "object",
+              "required": [
+                "required_fields",
+                "entity_count",
+                "relation_count",
+                "passed"
+              ],
+              "properties": {
+                "required_fields": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "entity_count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "relation_count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "passed": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            },
+            "business_rules": {
+              "type": "object",
+              "required": [
+                "required_fields",
+                "count",
+                "passed"
+              ],
+              "properties": {
+                "required_fields": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "passed": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            },
+            "decision_strategy": {
+              "type": "object",
+              "required": [
+                "required_fields",
+                "count",
+                "passed"
+              ],
+              "properties": {
+                "required_fields": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "passed": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "passed_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "coverage_ratio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "ready": {
+          "type": "boolean"
+        },
+        "missing": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "ontology_core_ui": {
+      "type": "object",
+      "required": [
+        "ready",
+        "coverage_ratio",
+        "coverage_percent",
+        "missing",
+        "missing_labels",
+        "triads"
+      ],
+      "properties": {
+        "ready": {
+          "type": "boolean"
+        },
+        "coverage_ratio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "coverage_percent": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "missing": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "missing_labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "triads": {
+          "type": "object",
+          "required": [
+            "entity_relation",
+            "business_rules",
+            "decision_strategy"
+          ],
+          "properties": {
+            "entity_relation": {
+              "type": "boolean"
+            },
+            "business_rules": {
+              "type": "boolean"
+            },
+            "decision_strategy": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        }
       },
       "additionalProperties": false
     }

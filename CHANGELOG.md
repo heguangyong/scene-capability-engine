@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.18] - 2026-03-06
+
+### Added
+- Capability iteration UI schema now includes triad-ready candidate/score/mapping/register contracts for direct Magicball rendering.
+- Magicball capability iteration docs now define triad-based inventory sorting and evaluation fields.
+
 ## [3.6.17] - 2026-03-06
 
 ### Added

@@ -36,7 +36,7 @@ sce capability extract --scene <scene_id> --specs <specs> --sample-limit <n> --j
 ```
 
 响应：
-- 返回 `capability-extract` payload
+- 返回 `capability-extract` payload，重点消费 `ontology_core` 与 `summary.ontology_missing_triads`
 
 ---
 
@@ -59,7 +59,7 @@ sce capability score --input <candidate_file> --json
 ```
 
 响应：
-- 返回 `capability-score` payload
+- 返回 `capability-score` payload，重点消费 `scores.ontology_core_score` 与 `scores.ontology_core`
 
 ---
 
@@ -87,7 +87,7 @@ sce capability map --input <candidate_file> --mapping <ontology_file> \
 ```
 
 响应：
-- 返回 `capability-map` payload
+- 返回 `capability-map` payload，重点消费 `template.ontology_core`
 
 ---
 
@@ -112,7 +112,7 @@ sce capability register --input <template_file> --risk-level <level> --difficult
 ```
 
 响应：
-- 返回 `capability-register` payload
+- 返回 `capability-register` payload，重点消费 `ontology_core`（入库 triad 审核结果）
 
 ---
 
