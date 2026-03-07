@@ -149,6 +149,7 @@ Integration guardrails:
 - Mainline cutover is allowed only one cluster at a time.
 - Phase 2 now also includes `lib/auto/session-persistence-service.js` for batch/controller session persistence and retention-trigger orchestration.
 - Every cutover requires:
+- Phase 2 now also includes `lib/auto/governance-session-storage-service.js` for governance session read/load/persist storage boundaries.
   1. `node --check lib/commands/auto.js`
   2. `npx jest tests/integration/auto-close-loop-cli.integration.test.js --runInBand`
   3. If startup behavior is touched, also run:

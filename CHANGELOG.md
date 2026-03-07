@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `docs/auto-refactor-index.md` to track safe `auto.js` shadow-module and cutover order.
 ### Changed
 - Cut over shared `archive-summary` helpers into `lib/commands/auto.js` mainline after passing unit and guarded integration validation.
+- Continued service-layer extraction by moving governance session read/load/persist logic into `lib/auto/governance-session-storage-service.js` with dedicated unit coverage.
 - Continued service-layer extraction by moving batch/controller session persistence into `lib/auto/session-persistence-service.js` with dedicated unit coverage.
 - Continued service-layer extraction by moving close-loop/batch/controller prune orchestration into `lib/auto/session-prune-service.js` with dedicated unit coverage.
 - Continued service-layer extraction by moving close-loop/controller/governance session query orchestration into `lib/auto/session-query-service.js` with dedicated unit coverage.
