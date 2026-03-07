@@ -143,6 +143,7 @@ Integration guardrails:
 ## Current Policy
 - Phase 2 now also includes `lib/auto/governance-advisory-service.js` for recovery/controller advisory execution and latest-source selection.
 
+- Phase 2 now also includes `lib/auto/session-query-service.js` for close-loop/controller/governance session list/stats orchestration.
 - Shadow modules may be added freely if they are pure and unit-tested.
 - Mainline cutover is allowed only one cluster at a time.
 - Every cutover requires:
