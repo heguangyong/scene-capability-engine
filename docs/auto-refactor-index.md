@@ -151,8 +151,11 @@ Integration guardrails:
 - Every cutover requires:
 - Phase 2 now also includes `lib/auto/governance-session-storage-service.js` for governance session read/load/persist storage boundaries.
   1. `node --check lib/commands/auto.js`
+- Phase 2 now also includes `lib/auto/controller-session-storage-service.js` for controller session read/resolve/load storage boundaries.
   2. `npx jest tests/integration/auto-close-loop-cli.integration.test.js --runInBand`
+- Phase 2 now also includes `lib/auto/batch-summary-storage-service.js` for batch summary read/resolve/load storage boundaries.
   3. If startup behavior is touched, also run:
+- Phase 2 now also includes `lib/auto/close-loop-session-storage-service.js` for close-loop session read storage boundaries.
      - `tests/integration/version-cli.integration.test.js`
      - `tests/integration/legacy-migration-guard-cli.integration.test.js`
      - `tests/integration/takeover-baseline-cli.integration.test.js`
