@@ -1,11 +1,8 @@
 ﻿# Auto Refactor Index
-- Phase 2 now also includes `lib/auto/archive-schema-service.js` for archive schema compatibility, inspection, and migration orchestration.
 
-- Phase 2 now also includes `lib/auto/recovery-selection-service.js` for latest recoverable summary/controller-session selection.
 ## Goal
-- Phase 2 now also includes `lib/auto/close-loop-recovery-service.js` for recovery-cycle orchestration.
 
-Reduce `lib/commands/auto.js` by extracting pure helper, presenter, summary, service, and storage logic into stable modules before final command-layer slimming.
+Reduce `lib/commands/auto.js` by extracting helper, presenter, summary, service, and storage logic into stable modules before final command-layer slimming.
 
 ## Current Modules
 
@@ -87,12 +84,17 @@ Reduce `lib/commands/auto.js` by extracting pure helper, presenter, summary, ser
 - `buildAutoGovernanceStats`
 
 15. `lib/auto/governance-advisory-service.js`
-- `resolveLatestRecoverableBatchSummary`
-- `resolveLatestPendingControllerSession`
 - `executeGovernanceAdvisoryRecover`
 - `executeGovernanceAdvisoryControllerResume`
 
-16. `lib/auto/session-query-service.js`
+16. `lib/auto/recovery-selection-service.js`
+- `resolveLatestRecoverableBatchSummary`
+- `resolveLatestPendingControllerSession`
+
+17. `lib/auto/close-loop-recovery-service.js`
+- `executeCloseLoopRecoveryCycle`
+
+18. `lib/auto/session-query-service.js`
 - `listCloseLoopSessions`
 - `statsCloseLoopSessions`
 - `listGovernanceCloseLoopSessions`
@@ -100,42 +102,51 @@ Reduce `lib/commands/auto.js` by extracting pure helper, presenter, summary, ser
 - `listCloseLoopControllerSessions`
 - `statsCloseLoopControllerSessions`
 
-17. `lib/auto/session-prune-service.js`
+19. `lib/auto/session-prune-service.js`
 - `pruneCloseLoopBatchSummarySessions`
 - `pruneCloseLoopControllerSessions`
 - `pruneCloseLoopSessions`
 - `pruneCloseLoopBatchSummarySessionsCli`
 - `pruneCloseLoopControllerSessionsCli`
 
-18. `lib/auto/session-persistence-service.js`
+20. `lib/auto/session-persistence-service.js`
 - `maybePersistCloseLoopControllerSummary`
 - `maybePersistCloseLoopBatchSummary`
 
-19. `lib/auto/governance-session-storage-service.js`
+21. `lib/auto/governance-session-storage-service.js`
 - `readGovernanceCloseLoopSessionEntries`
 - `resolveGovernanceCloseLoopSessionFile`
 - `loadGovernanceCloseLoopSessionPayload`
 - `persistGovernanceCloseLoopSession`
 
-20. `lib/auto/controller-session-storage-service.js`
+22. `lib/auto/controller-session-storage-service.js`
 - `readCloseLoopControllerSessionEntries`
 - `resolveCloseLoopControllerSessionFile`
 - `loadCloseLoopControllerSessionPayload`
 
-21. `lib/auto/batch-summary-storage-service.js`
+23. `lib/auto/batch-summary-storage-service.js`
 - `getCloseLoopBatchSummaryDir`
 - `readCloseLoopBatchSummaryEntries`
 - `resolveCloseLoopBatchSummaryFile`
 - `loadCloseLoopBatchSummaryPayload`
 
-22. `lib/auto/close-loop-session-storage-service.js`
+24. `lib/auto/close-loop-session-storage-service.js`
 - `getCloseLoopSessionDir`
 - `readCloseLoopSessionEntries`
+
+25. `lib/auto/archive-schema-service.js`
+- `normalizeSchemaScope`
+- `normalizeTargetSchemaVersion`
+- `getAutoArchiveSchemaTargets`
+- `classifyArchiveSchemaCompatibility`
+- `checkAutoArchiveSchema`
+- `migrateAutoArchiveSchema`
 
 ## Validation Coverage
 
 Unit tests:
 - `tests/unit/auto/archive-summary.test.js`
+- `tests/unit/auto/archive-schema-service.test.js`
 - `tests/unit/auto/program-diagnostics.test.js`
 - `tests/unit/auto/spec-protection.test.js`
 - `tests/unit/auto/retention-policy.test.js`
@@ -149,6 +160,8 @@ Unit tests:
 - `tests/unit/auto/governance-close-loop-service.test.js`
 - `tests/unit/auto/governance-stats-service.test.js`
 - `tests/unit/auto/governance-advisory-service.test.js`
+- `tests/unit/auto/recovery-selection-service.test.js`
+- `tests/unit/auto/close-loop-recovery-service.test.js`
 - `tests/unit/auto/session-query-service.test.js`
 - `tests/unit/auto/session-prune-service.test.js`
 - `tests/unit/auto/session-persistence-service.test.js`
@@ -167,11 +180,13 @@ Integration guardrails:
 
 - Phase 1 mainline cutover is complete for the planned `auto.js` helper/presenter/policy modules.
 - Governance summary logic is extracted into `lib/auto/governance-summary.js`.
-- Phase 2 service-layer extraction is active and currently includes:
+- Phase 2 service/storage extraction currently includes:
 - `lib/auto/governance-maintenance-service.js`
 - `lib/auto/governance-close-loop-service.js`
 - `lib/auto/governance-stats-service.js`
 - `lib/auto/governance-advisory-service.js`
+- `lib/auto/recovery-selection-service.js`
+- `lib/auto/close-loop-recovery-service.js`
 - `lib/auto/session-query-service.js`
 - `lib/auto/session-prune-service.js`
 - `lib/auto/session-persistence-service.js`
@@ -179,7 +194,8 @@ Integration guardrails:
 - `lib/auto/controller-session-storage-service.js`
 - `lib/auto/batch-summary-storage-service.js`
 - `lib/auto/close-loop-session-storage-service.js`
-- Next phase should focus on archive schema normalization, remaining recovery/storage boundaries, and final `auto.js` slimming.
+- `lib/auto/archive-schema-service.js`
+- Remaining work is concentrated in final orchestration slimming, runtime side-effect governance, and documentation/release closure.
 
 ## Current Policy
 
